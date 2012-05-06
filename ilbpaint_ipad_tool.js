@@ -4,100 +4,6 @@
 //-------------------------------------------------
 
 //-------------------------------------------------
-//パレット
-//-------------------------------------------------
-
-function Palette(){
-	//メンバ変数
-	this._color="rgba(255,0,0,1)";
-	this._palette_color=new Array();
-	this._palette_color_n;
-	this._selecting_no=0;
-
-	//クリックした
-	this.on_click=function(color,is_touch){
-		var new_color=this._palette_color[color];
-		
-		this._color=new_color;
-		
-		for(var i=0;i<this._palette_color_n;i++){
-			var w=g_color_width;
-			var h=g_color_width;
-			var alpha=1;
-			if(i==color){
-				w=g_color_width-4;
-				h=g_color_width-4;
-				document.getElementById("palette"+i).style.border="solid 2px #ffffff";
-			}else{
-				document.getElementById("palette"+i).style.border="none";
-			}
-			document.getElementById("palette"+i).style.width=w;
-			document.getElementById("palette"+i).style.height=h;
-		}
-		
-		this._selecting_no=color;
-	}
-
-	this.init=function(){
-		this._palette_color[0]="#000000";
-		this._palette_color[1]="#404040";
-		this._palette_color[2]="#606060";
-		this._palette_color[3]="#808080";
-		this._palette_color[4]="#a0a0a0";
-		this._palette_color[5]="#c0c0c0";
-		this._palette_color[6]="#eeeeee";
-		this._palette_color[7]="#ffffff";
-		this._palette_color[8]="#bc700c";
-		this._palette_color[9]="#ec9d86";
-		this._palette_color[10]="#ffc39e";
-		this._palette_color[11]="#ffd9c2";
-		this._palette_color[12]="#ff0000";
-		this._palette_color[13]="#ffacac";
-		this._palette_color[14]="#d894e0";
-		this._palette_color[15]="#0000ff";
-		this._palette_color[16]="#00ffff";
-		this._palette_color[17]="#50ff50";
-		this._palette_color[18]="#50bc50";
-		this._palette_color[19]="#ffff00";
-		this.update();
-		this.on_click(0);
-	}
-	
-	this.update=function(){
-		this._palette_color_n=20;
-		var txt="";
-		for(var i=0;i<this._palette_color_n;i++){
-			txt+="<div id='palette"+i+"'style='float:left;width:"+g_color_width+"px;height:"+g_color_width+"px;background-color:"+this._palette_color[i]+";'";
-			if(ipad_is_pc()){
-				txt+=" onclick='javascript:g_palette.on_click("+i+",false);'";
-			}
-			txt+=">";
-			txt+="</div>";
-		}
-		document.getElementById("palette").innerHTML=txt;
-
-		if(!ipad_is_pc()){
-		    for(var i=0;i<this._palette_color_n;i++){
-				document.getElementById("palette"+i).addEventListener("touchstart", function(){g_palette.on_click(this.id.split("palette")[1],true);},false);
-		    }
-		}
-	}
-	
-	this.get_color=function(){
-		if(g_tool.get_tool()=="eraser"){
-			return "#ffffff";
-		}
-		return this._color;
-	}
-	
-	this.set_color=function(color){
-		this._palette_color[this._selecting_no]=color;
-		this.update();
-		this.on_click(this._selecting_no,false);
-	}
-}
-
-//-------------------------------------------------
 //ツールボックス
 //-------------------------------------------------
 
@@ -121,6 +27,7 @@ function ToolBox(){
 
 		txt+=this._add_button("g_tool.set_pen","ペン",s,margin);
 		txt+=this._add_button("g_tool.set_eraser","消しゴム",s,0);
+		txt+=this._add_button("g_tool.set_spoit","スポイト",s,0);
 		txt+=this._add_button("g_tool.set_hand","ハンド",s,0);
 
 		txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+",s,margin);
@@ -145,6 +52,7 @@ function ToolBox(){
 			document.getElementById("g_undo_redo.redo").addEventListener("touchstart", function(e){g_undo_redo.redo(true);},false);
 			document.getElementById("g_tool.set_pen").addEventListener("touchstart", function(e){g_tool.set_pen();},false);
 			document.getElementById("g_tool.set_eraser").addEventListener("touchstart", function(e){g_tool.set_eraser();},false);
+			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_pen();},false);
 			document.getElementById("g_tool.set_hand").addEventListener("touchstart", function(e){g_tool.set_hand();},false);
 			document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);},false);
 			document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);},false);
@@ -189,16 +97,22 @@ function Tool(){
 		this._set_core("eraser");
 	}
 	
+	this.set_spoit=function(){
+		this._set_core("spoit");
+	}
+	
 	this._set_core=function(tool){
 		var color="#c7e5f9";
 		document.getElementById("g_tool.set_pen").style["background-color"]=color;
 		document.getElementById("g_tool.set_eraser").style["background-color"]=color;
 		document.getElementById("g_tool.set_hand").style["background-color"]=color;
+		document.getElementById("g_tool.set_spoit").style["background-color"]=color;
 
 		color="#a7c5d9"
 		document.getElementById("g_tool.set_"+tool).style["background-color"]=color;
 		
 		this._tool=tool;
+		g_color_circle.on_tool_change(tool);
 	}
 	
 	this.get_tool=function(){

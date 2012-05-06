@@ -3,39 +3,49 @@
 //copyright 2010-2012 ABARS all rights reserved.
 //-------------------------------------------------
 
+var FOCUS_NONE=0;
+var FOCUS_COLOR=1;
+var FOCUS_SIZE=2;
+var FOCUS_ALPHA=3;
+var FOCUS_BOX=4;
+
 function ColorCircle(){
 	this._color_map=new Array();
-
+	
 	this._color_circle;
 	this._color_box;
 	
 	this._canvas_width;
 	this._canvas_height;
 	
+	this._focus=0;
+	
 	this._color_circle_x=4;
 	this._color_circle_y=4;
-	this._color_circle_width=210;
-	this._color_circle_height=12;
+	this._color_circle_width=310;
+	this._color_circle_height=16;
 	
-	this._color_box_x=218;
+	this._color_box_x=380-60;
 	this._color_box_y=4;
-	this._color_box_width=36;
-	this._color_box_height=36;
+	this._color_box_width=56;
+	this._color_box_height=56;
 	
 	this._size_slider_x=4;
-	this._size_slider_y=24;
-	this._size_slider_width=100;
-	this._size_slider_height=8;
+	this._size_slider_y=32;
+	this._size_slider_width=120;
+	this._size_slider_height=16;
 
-	this._alpha_slider_x=4+100+4;
-	this._alpha_slider_y=24;
+	this._alpha_slider_x=4+140+4;
+	this._alpha_slider_y=32;
 	this._alpha_slider_width=100;
-	this._alpha_slider_height=8;
+	this._alpha_slider_height=16;
 	
-	this._layer_x=320-60;
-	this._layer_y=4;
-	this._layer_width=36;
-	this._layer_height=36;
+	this._layer_x=380-60-40;
+	this._layer_y=28;
+	this._layer_width=24;
+	this._layer_height=24;
+	
+	this._tool=0;
 	
 	this._base_color=0x000000;
 	this._color=0x000000;
@@ -43,8 +53,8 @@ function ColorCircle(){
 	this._cursor_x=0;
 	this._box_x=18;
 	this._box_y=30;
-	this._pen_size=3;
-	this._alpha=100;
+	this._pen_size=new Array(3,15);
+	this._alpha=new Array(100,100);
 	this._layer=1;
 	
 	this.init=function(){
@@ -116,8 +126,8 @@ function ColorCircle(){
 		context.closePath();
 		context.stroke();
 		
-		this._draw_slider(context,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height,this._pen_size,true);
-this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height,this._alpha,false);
+		this._draw_slider(context,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height,this._pen_size[this._tool],true);
+this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height,this._alpha[this._tool],false);
 
 		this._draw_layer(context);
 		
@@ -126,13 +136,13 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 
 this._draw_preview=function(context){
 		context.beginPath();
-		var r=this._pen_size/2;
+		var r=this._pen_size[this._tool]/2;
 		if(r>20){
 			r=20;
 		}
 		context.strokeStyle=this.get_hex_color();//"#aaaaaa";
 		context.fillStyle=this.get_hex_color();//"#aaaaaa";
-		context.globalAlpha=(this._alpha/100.0);
+		context.globalAlpha=(this._alpha[this._tool]/100.0);
 		context.arc(this._canvas_height/2,this._canvas_height/2,r,0,2*Math.PI,false);
 		context.fill();
 		context.closePath();
@@ -176,14 +186,14 @@ this._draw_preview=function(context){
 //-------------------------------------------------
 	
 	this.get_size=function(){
-		return this._pen_size;
+		return this._pen_size[this._tool];
 	}
 
 	this.get_alpha=function(){
 		if(g_tool.get_tool()=="eraser"){
 			return 1.0;
 		}
-		return this._alpha/100.0;
+		return this._alpha[this._tool]/100.0;
 	}
 
 //-------------------------------------------------
@@ -224,8 +234,9 @@ this._draw_preview=function(context){
 	this._is_hold=false;
 
 	this._is_range=function(x,y,tx,ty,tw,th){
-		if(x>=tx && x<tx+tw){
-			if(y>=ty && y<ty+th){
+		var margin=4;
+		if(x>=tx-margin && x<tx+tw+margin){
+			if(y>=ty-margin && y<ty+th+margin){
 				return true;
 			}
 		}
@@ -233,42 +244,56 @@ this._draw_preview=function(context){
 	}
 	
 	this.on_mouse_down=function(x,y){
+		this.on_mouse_down_core(x,y,true);
+	}
+	
+	this.on_mouse_down_core=function(x,y,click){
 		x=this._get_mx(x);
 		y=this._get_my(y);
 		
 		var canvas=document.getElementById("color_circle");
 		var context=canvas.getContext("2d");
 		
-		var margin=2;
-
-		if(this._is_range(x,y,this._color_circle_x,this._color_circle_y-margin,this._color_circle_width,this._color_circle_height+margin*2)){
+		if(this._focus==FOCUS_COLOR || (click && this._is_range(x,y,this._color_circle_x,this._color_circle_y,this._color_circle_width,this._color_circle_height))){
 			this._cursor_x=x-this._color_circle_x;
-			this._base_color=this._get_image_color(this._color_circle.data,this._cursor_x,0,this._color_circle_width);
-			this._color_box=this._boxg(context,0,0,this._color_box_width,this._color_box_height,this._base_color);
-			this._color=this._get_image_color(this._color_box.data,this._box_x,this._box_y,this._color_box_width);
+			if(this._cursor_x<0) this._cursor_x=0;
+			if(this._cursor_x>=this._color_circle_width) this._cursor_x=this._color_circle_width-1;
+			var color=this._get_image_color(this._color_circle.data,this._cursor_x,0,this._color_circle_width);
+			this._set_base_color(color);
 			g_palette.set_color(this.get_hex_color());
-			this._draw(context);
+			this._focus=FOCUS_COLOR;
 		}
 
-		if(this._is_range(x,y,this._color_box_x,this._color_box_y,this._color_box_width,this._color_box_height)){
+		if(this._focus==FOCUS_BOX || (click && this._is_range(x,y,this._color_box_x,this._color_box_y,this._color_box_width,this._color_box_height))){
 			this._box_x=x-this._color_box_x;
 			this._box_y=y-this._color_box_y;
+			if(this._box_x<0) this._box_x=0;
+			if(this._box_x>=this._color_box_width) this._box_x=this._color_box_width-1;
+			if(this._box_y<0) this._box_y=0;
+			if(this._box_y>=this._color_box_height) this._box_y=this._color_box_height-1;
 			this._color=this._get_image_color(this._color_box.data,this._box_x,this._box_y,this._color_box_width);
 			g_palette.set_color(this.get_hex_color());
 			this._draw(context);
+			this._focus=FOCUS_BOX;
 		}
 		
-		if(this._is_range(x,y,this._size_slider_x,this._size_slider_y-margin,this._size_slider_width,this._size_slider_height+margin*2)){
-			this._pen_size=x-this._size_slider_x;
+		if(this._focus==FOCUS_SIZE || (click && this._is_range(x,y,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height))){
+			this._pen_size[this._tool]=x-this._size_slider_x;
+			if(this._pen_size[this._tool]<0) this._pen_size[this._tool]=0;
+			if(this._pen_size[this._tool]>this._size_slider_width) this._pen_size[this._tool]=this._size_slider_width;
 			this._draw(context);
+			this._focus=FOCUS_SIZE;
 		}
 		
-		if(this._is_range(x,y,this._alpha_slider_x,this._alpha_slider_y-margin,this._alpha_slider_width,this._alpha_slider_height+margin*2)){
-			this._alpha=x-this._alpha_slider_x;
+		if(this._focus==FOCUS_ALPHA || (click && this._is_range(x,y,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height))){
+			this._alpha[this._tool]=x-this._alpha_slider_x;
+			if(this._alpha[this._tool]<0) this._alpha[this._tool]=0;
+			if(this._alpha[this._tool]>100) this._alpha[this._tool]=100;
 			this._draw(context);
+			this._focus=FOCUS_ALPHA;
 		}
 
-if(this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
+if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
 			this._layer=1-this._layer;
 			this._draw(context);
 		}
@@ -278,12 +303,13 @@ if(this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_
 	
 	this.on_mouse_move=function(x,y){
 		if(this._is_hold){
-			this.on_mouse_down(x,y);
+			this.on_mouse_down_core(x,y,false);
 		}
 	}
 	
 	this.on_mouse_up=function(){
 		this._is_hold=false;
+		this._focus=FOCUS_NONE;
 	}
 
 	this._get_mx=function(x){
@@ -305,7 +331,99 @@ if(this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_
 		var a=0;//data[adr+3];
 		return (a<<24) | (r<<16) | (g<<8) | b;
 	}
+	
+	this.on_tool_change=function(tool){
+		var canvas=document.getElementById("color_circle");
+		var context=canvas.getContext("2d");
+		if(tool=="pen"){
+			this._tool=0;
+		}else{
+			this._tool=1;
+		}
+		this._draw(context);
+	}
+	
+	this._set_base_color=function(color){
+		this._redraw_box();
+		this._base_color=color;
+		this._color=this._get_image_color(this._color_box.data,this._box_x,this._box_y,this._color_box_width);
+		this._redraw();
+	}
+	
+	this._redraw_box=function(){
+		var canvas=document.getElementById("color_circle");
+		var context=canvas.getContext("2d");
+		this._color_box=this._boxg(context,0,0,this._color_box_width,this._color_box_height,this._base_color);
+	}
+	
+	this._redraw=function(){
+		var canvas=document.getElementById("color_circle");
+		var context=canvas.getContext("2d");
+		this._draw(context);
+	}
+	
+	this.set_color=function(color){
+		this._decide_cursor(color);
+		this._redraw_box();
+		this._decide_box(color);
+		this._color=color;
+		this._redraw();
+		g_palette.set_color(this.get_hex_color());
+	}
+	
+	this.change_palette=function(color){
+		color=parseInt(color.replace("#","0x"));
+		this._decide_cursor(color);
+		this._redraw_box();
+		this._decide_box(color);
+		this._color=color;
+		this._redraw();
+	}
 
+	this._decide_cursor=function(color){
+		var as=(color>>24)&0xff;
+		var rs=(color>>16)&0xff;
+		var gs=(color>>8)&0xff;
+		var bs=(color>>0)&0xff;
+		
+		var width=this._color_circle_width;
+
+		var min_o=Math.floor(width*Math.atan2(Math.sqrt(3)*(gs-bs),2*rs-gs-bs)/(2*Math.PI));
+		if(min_o<0) min_o+=width;
+		min_o=min_o%width;
+		
+		this._cursor_x=min_o;
+		this._base_color=this._get_image_color(this._color_circle.data,this._cursor_x,0,this._color_circle_width);
+	}
+	
+	this._decide_box=function(color){
+		var min_d=(1<<30);
+		var min_x,min_y;
+
+		var rs=(color>>16)&0xff;
+		var gs=(color>>8)&0xff;
+		var bs=(color>>0)&0xff;
+		
+		for(var y=0;y<this._color_box_height;y++){
+			for(var x=0;x<this._color_box_width;x++){
+				var adr=y*this._color_box_width+x;
+				adr=adr*4;
+				var r=this._color_box.data[adr+0];
+				var g=this._color_box.data[adr+1];
+				var b=this._color_box.data[adr+2];
+				var d=(r-rs)*(r-rs)+(g-gs)*(g-gs)+(b-bs)*(b-bs);
+				if(min_d>d){
+					min_d=d;
+					min_x=x;
+					min_y=y;
+				}
+			}
+		}
+		
+		this._box_x=min_x;
+		this._box_y=min_y;
+	}
+	
 //-------------------------------------------------
 //カラーサークル
 //-------------------------------------------------

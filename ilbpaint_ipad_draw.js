@@ -119,6 +119,10 @@ function DrawCanvas(){
 	}
 	
 	this.on_mouse_up=function(){
+		if(!(this._draw_flag)){
+			return null;
+		}
+
 		if(this._draw_flag){
 			while(this._x_array.length<=2){
 				this._add_point(this._x_array[0],this._y_array[0]);
@@ -171,6 +175,23 @@ function DrawCanvas(){
 		
 		return true;
 	} 
+
+//-------------------------------------------------
+//スポイトコア
+//-------------------------------------------------
+
+	this.get_color_of_canvas=function(x,y){
+		x=this._get_mx(x);
+		y=this._get_mx(y);
+		
+		var image=can_local[g_color_circle.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
+		var r=image.data[0];
+		var g=image.data[1];
+		var b=image.data[2];
+		var a=image.data[3];
+			
+		return (a<<24) | (r<<16) | (g<<8) | b;
+	}
 
 //-------------------------------------------------
 //位置取得

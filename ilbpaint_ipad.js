@@ -17,6 +17,7 @@ var g_chat=new Chat();
 var g_buffer=new Buffer();
 var g_draw_primitive=new DrawPrimitive();
 var g_user=new User();
+var g_spoit=new Spoit();
 var g_tool=new Tool();
 var g_color_circle=new ColorCircle();
 
@@ -25,14 +26,15 @@ function ipad_init(){
 	ipad_event_init();
 	
 	g_tool_box.init();
-	g_palette.init();
 	g_hand.init();
 	g_chat.init();
 	g_buffer.init();
 	g_draw_primitive.init();
 	g_user.init();
-	g_tool.init();
+	g_spoit.init();
 	g_color_circle.init();
+	g_tool.init();
+	g_palette.init();
 	
 	if(g_viewmode){
 		g_buffer._update_comment({"comment":"閲覧モードで起動しました。書き込みはできません。"});
@@ -114,20 +116,10 @@ function ipad_on_mouse_move(e){
 			g_hand.on_mouse_move(e.touches[0].clientX,e.touches[0].clientY,e.touches[1].clientX,e.touches[1].clientY);
 			return;
 		}
-		if(g_hand.is_hand_mode()){
-			g_hand.on_mouse_move(e.touches[0].clientX,e.touches[0].clientY,0,0);
-			return;
-		}
-		if(!g_hand.get_prevent_draw()){
-			g_draw_canvas.on_mouse_move(e.touches[0].clientX,e.touches[0].clientY);
-		}
+		ipad_on_mouse_move_core(e.touches[0].clientX,e.touches[0].clientY);
 		return;
 	}
-	if(g_hand.is_hand_mode()){
-		g_hand.on_mouse_move(e.clientX,e.clientY,0,0);
-		return;
-	}
-	g_draw_canvas.on_mouse_move(e.clientX,e.clientY);
+	ipad_on_mouse_move_core(e.clientX,e.clientY);
 }
 
 function ipad_on_mouse_down(e){
@@ -140,21 +132,36 @@ function ipad_on_mouse_down(e){
 			g_hand.on_mouse_down(e.touches[0].clientX,e.touches[0].clientY,e.touches[1].clientX,e.touches[1].clientY);
 			return;
 		}
-		if(g_hand.is_hand_mode()){
-			g_hand.on_mouse_down(e.touches[0].clientX,e.touches[0].clientY,0,0);
-			return;
-		}
-		if(!(g_chat.is_view_mode())){
-			g_draw_canvas.on_mouse_down(e.touches[0].clientX,e.touches[0].clientY);
-		}
+		ipad_on_mouse_down_core(e.touches[0].clientX,e.touches[0].clientY);
+		return;
+	}
+	ipad_on_mouse_down_core(e.clientX,e.clientY);
+}
+
+function ipad_on_mouse_move_core(x,y){
+	if(g_spoit.is_spoit_mode()){
+		g_spoit.on_mouse_move(x,y);
 		return;
 	}
 	if(g_hand.is_hand_mode()){
-		g_hand.on_mouse_down(e.clientX,e.clientY,0,0);
+		g_hand.on_mouse_move(x,y,0,0);
+		return;
+	}
+	g_draw_canvas.on_mouse_move(x,y);
+
+}
+
+function ipad_on_mouse_down_core(x,y){
+	if(g_spoit.is_spoit_mode()){
+		g_spoit.on_mouse_down(x,y);
+		return;
+	}
+	if(g_hand.is_hand_mode()){
+		g_hand.on_mouse_down(x,y,0,0);
 		return;
 	}
 	if(!(g_chat.is_view_mode())){
-		g_draw_canvas.on_mouse_down(e.clientX,e.clientY);
+		g_draw_canvas.on_mouse_down(x,y);
 	}
 }
 
@@ -174,6 +181,7 @@ function ipad_on_mouse_up_core(){
 	}
 
 	g_hand.on_mouse_up(0,0,0,0);
+	g_spoit.on_mouse_up();
 }
 
 function ipad_is_pc(){
