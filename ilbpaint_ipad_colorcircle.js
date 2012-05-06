@@ -27,8 +27,8 @@ function ColorCircle(){
 	
 	this._color_box_x=380-60;
 	this._color_box_y=4;
-	this._color_box_width=56;
-	this._color_box_height=56;
+	this._color_box_width=54;
+	this._color_box_height=54;
 	
 	this._size_slider_x=4;
 	this._size_slider_y=32;
@@ -120,11 +120,7 @@ function ColorCircle(){
 		context.closePath();
 		context.stroke();
 
-		context.beginPath();
-		var r=4;
-		context.arc(this._color_box_x+this._box_x,this._color_box_y+this._box_y,r,0,2*Math.PI,false);
-		context.closePath();
-		context.stroke();
+		this._draw_box(context);
 		
 		this._draw_slider(context,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height,this._pen_size[this._tool],true);
 this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height,this._alpha[this._tool],false);
@@ -132,9 +128,22 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 		this._draw_layer(context);
 		
 		//this._draw_preview(context);
-}
+	}
 
-this._draw_preview=function(context){
+	this._draw_box=function(context){
+		context.beginPath();
+		var r=3;
+		if(this._box_y>=this._color_box_height*7/8){
+			context.strokeStyle="#ffffff";
+		}else{
+			context.strokeStyle="#000000";
+		}
+		context.arc(this._color_box_x+this._box_x,this._color_box_y+this._box_y,r,0,2*Math.PI,false);
+		context.closePath();
+		context.stroke();
+	}
+
+	this._draw_preview=function(context){
 		context.beginPath();
 		var r=this._pen_size[this._tool]/2;
 		if(r>20){
@@ -255,7 +264,7 @@ this._draw_preview=function(context){
 		var context=canvas.getContext("2d");
 		
 		if(this._focus==FOCUS_COLOR || (click && this._is_range(x,y,this._color_circle_x,this._color_circle_y,this._color_circle_width,this._color_circle_height))){
-			this._cursor_x=x-this._color_circle_x;
+			this._cursor_x=Math.floor(x-this._color_circle_x);
 			if(this._cursor_x<0) this._cursor_x=0;
 			if(this._cursor_x>=this._color_circle_width) this._cursor_x=this._color_circle_width-1;
 			var color=this._get_image_color(this._color_circle.data,this._cursor_x,0,this._color_circle_width);
@@ -279,7 +288,7 @@ this._draw_preview=function(context){
 		
 		if(this._focus==FOCUS_SIZE || (click && this._is_range(x,y,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height))){
 			this._pen_size[this._tool]=x-this._size_slider_x;
-			if(this._pen_size[this._tool]<0) this._pen_size[this._tool]=0;
+			if(this._pen_size[this._tool]<1) this._pen_size[this._tool]=1;
 			if(this._pen_size[this._tool]>this._size_slider_width) this._pen_size[this._tool]=this._size_slider_width;
 			this._draw(context);
 			this._focus=FOCUS_SIZE;
@@ -344,8 +353,8 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 	}
 	
 	this._set_base_color=function(color){
-		this._redraw_box();
 		this._base_color=color;
+		this._redraw_box();
 		this._color=this._get_image_color(this._color_box.data,this._box_x,this._box_y,this._color_box_width);
 		this._redraw();
 	}
@@ -366,7 +375,7 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 		this._decide_cursor(color);
 		this._redraw_box();
 		this._decide_box(color);
-		this._color=color;
+		this._color=color&0xffffff;
 		this._redraw();
 		g_palette.set_color(this.get_hex_color());
 	}

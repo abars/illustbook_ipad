@@ -32,11 +32,11 @@ function ToolBox(){
 
 		txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+",s,margin);
 		txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-",s,0);
-		if(!(g_chat.is_chat_mode())){
-			txt+=this._add_button("g_draw_canvas.clear","クリア",s,margin);
-		}
 		if(!(g_chat.is_view_mode())){
 			txt+=this._add_button("ipad_switch_upload_form","投稿",s,margin);
+		}
+		if(!(g_chat.is_chat_mode())){
+			txt+=this._add_button("g_draw_canvas.clear","クリア",s,margin);
 		}
 		
 		//デバッグ
@@ -52,15 +52,15 @@ function ToolBox(){
 			document.getElementById("g_undo_redo.redo").addEventListener("touchstart", function(e){g_undo_redo.redo(true);},false);
 			document.getElementById("g_tool.set_pen").addEventListener("touchstart", function(e){g_tool.set_pen();},false);
 			document.getElementById("g_tool.set_eraser").addEventListener("touchstart", function(e){g_tool.set_eraser();},false);
-			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_pen();},false);
+			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_spoit();},false);
 			document.getElementById("g_tool.set_hand").addEventListener("touchstart", function(e){g_tool.set_hand();},false);
 			document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);},false);
 			document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);},false);
-			if(!(g_chat.is_chat_mode())){
-				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);},false);
-			}
 			if(!(g_chat.is_view_mode())){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);},false);
+			}
+			if(!(g_chat.is_chat_mode())){
+				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);},false);
 			}
 		}
 	}

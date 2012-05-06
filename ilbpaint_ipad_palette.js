@@ -53,12 +53,15 @@ function Palette(){
 			}
 			txt+=">";
 			txt+="</div>";
+			if(i==this._palette_color_n/2-1){
+				txt+="<BR>";
+			}
 		}
 		document.getElementById("palette").innerHTML=txt;
 
 		if(!ipad_is_pc()){
 		    for(var i=0;i<this._palette_color_n;i++){
-				document.getElementById("palette"+i).addEventListener("touchstart", function(){g_palette.on_click(this.id.split("palette")[1],true);},false);
+				document.getElementById("palette"+i).addEventListener("touchstart", g_palette_click,false);
 		    }
 		}
 
@@ -92,3 +95,7 @@ function Palette(){
 	}
 }
 
+function g_palette_click(e){
+	g_palette.on_click(this.id.split("palette")[1],true);
+	e.preventDefault();
+}

@@ -81,7 +81,7 @@ function ipad_get_instance(){
 	g_button_height=48;//20;
 	
 	g_size_width=32;
-	g_color_width=16;
+	g_color_width=28;
 }
 
 //-------------------------------------------------
@@ -182,6 +182,7 @@ function ipad_on_mouse_up_core(){
 
 	g_hand.on_mouse_up(0,0,0,0);
 	g_spoit.on_mouse_up();
+	g_color_circle.on_mouse_up();
 }
 
 function ipad_is_pc(){

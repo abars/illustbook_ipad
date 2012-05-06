@@ -182,7 +182,7 @@ function DrawCanvas(){
 
 	this.get_color_of_canvas=function(x,y){
 		x=this._get_mx(x);
-		y=this._get_mx(y);
+		y=this._get_my(y);
 		
 		var image=can_local[g_color_circle.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
 		var r=image.data[0];
@@ -211,6 +211,7 @@ function DrawCanvas(){
 		g_undo_redo.push();
 		for(var layer=0;layer<LAYER_N;layer++){
 			g_draw_primitive.clear(can_fixed[layer]);
+			g_draw_primitive.clear(can_local[layer]);
 		}
 	}
 }
