@@ -25,23 +25,20 @@ function Hand(){
 		
 		var cheight=document.getElementById("canvas_event").clientHeight;
 
-		var toolheight=0;//document.getElementById("toolbox").clientHeight;
+		var toolheight=document.getElementById("bottom_tool").clientHeight;
 		var new_height=(g_window_height-toolheight);
 		document.getElementById("canvas_event").style.height=""+new_height+"px";
 		
 		if(offset_recalc){
 			var add=(new_height-cheight)/2;
 			this._hand_y+=add/this._zoom;
-			can_div.style.top=this._hand_y;
+			can_div.style.top=""+this._hand_y+"px";
 		}
 	}
 	
 	this.init=function(){
-		this._buttom_size=200;
-		if(g_chat_key==null){
-			this._buttom_size=60;
-		}
-		this._left_size=60;
+		this._buttom_size=0;//document.getElementById("bottom_tool").clientHeight;
+		this._left_size=document.getElementById("toolmenu").clientWidth;
 		
 		this.resize(false);
 		

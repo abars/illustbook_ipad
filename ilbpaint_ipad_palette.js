@@ -53,7 +53,7 @@ function Palette(){
 			}
 			txt+=">";
 			txt+="</div>";
-			if(i==this._palette_color_n/2-1){
+			if(i==(this._palette_color_n/2)-1){
 				txt+="<BR>";
 			}
 		}

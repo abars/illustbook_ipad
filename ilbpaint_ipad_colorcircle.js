@@ -21,29 +21,29 @@ function ColorCircle(){
 	this._focus=0;
 	
 	this._color_circle_x=4;
-	this._color_circle_y=4;
-	this._color_circle_width=310;
-	this._color_circle_height=16;
+	this._color_circle_y=44;
+	this._color_circle_width=330;
+	this._color_circle_height=34;
 	
-	this._color_box_x=380-60;
+	this._color_box_x=420-80;
 	this._color_box_y=4;
-	this._color_box_width=54;
-	this._color_box_height=54;
+	this._color_box_width=74;
+	this._color_box_height=74;
 	
 	this._size_slider_x=4;
-	this._size_slider_y=32;
-	this._size_slider_width=120;
-	this._size_slider_height=16;
+	this._size_slider_y=4;
+	this._size_slider_width=170;
+	this._size_slider_height=34;
 
-	this._alpha_slider_x=4+140+4;
-	this._alpha_slider_y=32;
+	this._alpha_slider_x=4+180+4;
+	this._alpha_slider_y=4;
 	this._alpha_slider_width=100;
-	this._alpha_slider_height=16;
+	this._alpha_slider_height=34;
 	
-	this._layer_x=380-60-40;
-	this._layer_y=28;
-	this._layer_width=24;
-	this._layer_height=24;
+	this._layer_x=420-120;
+	this._layer_y=4;
+	this._layer_width=34;
+	this._layer_height=34;
 	
 	this._tool=0;
 	
@@ -53,7 +53,7 @@ function ColorCircle(){
 	this._cursor_x=0;
 	this._box_x=18;
 	this._box_y=30;
-	this._pen_size=new Array(3,15);
+	this._pen_size=new Array(30,70);
 	this._alpha=new Array(100,100);
 	this._layer=1;
 	
@@ -78,10 +78,12 @@ function ColorCircle(){
 		document.getElementById("color_circle").addEventListener("mousedown", ipad_color_circle_on_mouse_down,false);
 		document.getElementById("color_circle").addEventListener("mousemove", ipad_color_circle_on_mouse_move,false);
 		document.getElementById("bottom_tool").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
+		document.getElementById("toolmenu").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
 		
 		document.getElementById("color_circle").addEventListener("touchstart", ipad_color_circle_on_mouse_down,false);
 		document.getElementById("color_circle").addEventListener("touchmove", ipad_color_circle_on_mouse_move,false);
 		document.getElementById("bottom_tool").addEventListener("touchend", ipad_color_circle_on_mouse_up,false);
+		document.getElementById("toolmenu").addEventListener("touchend", ipad_color_circle_on_mouse_up,false);
 	}
 
 //-------------------------------------------------
@@ -151,7 +153,7 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 		}
 		context.strokeStyle=this.get_hex_color();//"#aaaaaa";
 		context.fillStyle=this.get_hex_color();//"#aaaaaa";
-		context.globalAlpha=(this._alpha[this._tool]/100.0);
+		context.globalAlpha=(this._alpha[this._tool]*1.0/this._alpha_slider_width);
 		context.arc(this._canvas_height/2,this._canvas_height/2,r,0,2*Math.PI,false);
 		context.fill();
 		context.closePath();
@@ -195,14 +197,16 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 //-------------------------------------------------
 	
 	this.get_size=function(){
-		return this._pen_size[this._tool];
+		var r=this._pen_size[this._tool]/16;
+		r=r*r;
+		return Math.floor(r)+1;
 	}
 
 	this.get_alpha=function(){
 		if(g_tool.get_tool()=="eraser"){
 			return 1.0;
 		}
-		return this._alpha[this._tool]/100.0;
+		return this._alpha[this._tool]*1.0/this._alpha_slider_width;
 	}
 
 //-------------------------------------------------
@@ -288,7 +292,7 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 		
 		if(this._focus==FOCUS_SIZE || (click && this._is_range(x,y,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height))){
 			this._pen_size[this._tool]=x-this._size_slider_x;
-			if(this._pen_size[this._tool]<1) this._pen_size[this._tool]=1;
+			if(this._pen_size[this._tool]<0) this._pen_size[this._tool]=0;
 			if(this._pen_size[this._tool]>this._size_slider_width) this._pen_size[this._tool]=this._size_slider_width;
 			this._draw(context);
 			this._focus=FOCUS_SIZE;
@@ -297,7 +301,7 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 		if(this._focus==FOCUS_ALPHA || (click && this._is_range(x,y,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height))){
 			this._alpha[this._tool]=x-this._alpha_slider_x;
 			if(this._alpha[this._tool]<0) this._alpha[this._tool]=0;
-			if(this._alpha[this._tool]>100) this._alpha[this._tool]=100;
+			if(this._alpha[this._tool]>this._alpha_slider_width) this._alpha[this._tool]=this._alpha_slider_width;
 			this._draw(context);
 			this._focus=FOCUS_ALPHA;
 		}

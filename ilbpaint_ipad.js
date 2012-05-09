@@ -26,7 +26,6 @@ function ipad_init(){
 	ipad_event_init();
 	
 	g_tool_box.init();
-	g_hand.init();
 	g_chat.init();
 	g_buffer.init();
 	g_draw_primitive.init();
@@ -35,6 +34,7 @@ function ipad_init(){
 	g_color_circle.init();
 	g_tool.init();
 	g_palette.init();
+	g_hand.init();
 	
 	if(g_viewmode){
 		g_buffer._update_comment({"comment":"閲覧モードで起動しました。書き込みはできません。"});
@@ -77,11 +77,11 @@ function ipad_get_instance(){
 	can_work = document.getElementById("canvas_work");
 	can_div = document.getElementById("canvas_div"); 
 	
-	g_button_width=48;//100;
-	g_button_height=48;//20;
+	g_button_width=48;
+	g_button_height=48;
 	
 	g_size_width=32;
-	g_color_width=28;
+	g_color_width=38;
 }
 
 //-------------------------------------------------
@@ -107,6 +107,9 @@ function ipad_event_init(){
 	//横スクロール禁止
 	document.getElementById("toolmenu").addEventListener("touchmove", function(e){ e.preventDefault();},false);
 	document.getElementById("bottom_tool").addEventListener("touchmove", function(e){ e.preventDefault();},false);
+	
+	//リサイズ
+	window.onresize=function(e){ g_hand.resize(true); }
 }
 
 function ipad_on_mouse_move(e){

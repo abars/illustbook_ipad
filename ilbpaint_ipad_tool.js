@@ -48,19 +48,19 @@ function ToolBox(){
 
 		//遅延登録が必須
 		if(!ipad_is_pc()){
-			document.getElementById("g_undo_redo.undo").addEventListener("touchstart", function(e){g_undo_redo.undo(true);},false);
-			document.getElementById("g_undo_redo.redo").addEventListener("touchstart", function(e){g_undo_redo.redo(true);},false);
-			document.getElementById("g_tool.set_pen").addEventListener("touchstart", function(e){g_tool.set_pen();},false);
-			document.getElementById("g_tool.set_eraser").addEventListener("touchstart", function(e){g_tool.set_eraser();},false);
-			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_spoit();},false);
-			document.getElementById("g_tool.set_hand").addEventListener("touchstart", function(e){g_tool.set_hand();},false);
-			document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);},false);
-			document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);},false);
+			document.getElementById("g_undo_redo.undo").addEventListener("touchstart", function(e){g_undo_redo.undo(true);e.preventDefault();},false);
+			document.getElementById("g_undo_redo.redo").addEventListener("touchstart", function(e){g_undo_redo.redo(true);e.preventDefault();},false);
+			document.getElementById("g_tool.set_pen").addEventListener("touchstart", function(e){g_tool.set_pen();e.preventDefault();},false);
+			document.getElementById("g_tool.set_eraser").addEventListener("touchstart", function(e){g_tool.set_eraser();e.preventDefault();},false);
+			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_spoit();e.preventDefault();},false);
+			document.getElementById("g_tool.set_hand").addEventListener("touchstart", function(e){g_tool.set_hand();e.preventDefault();},false);
+			document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);e.preventDefault();},false);
+			document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);e.preventDefault();},false);
 			if(!(g_chat.is_view_mode())){
-				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);},false);
+				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
 			}
 			if(!(g_chat.is_chat_mode())){
-				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);},false);
+				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);e.preventDefault();},false);
 			}
 		}
 	}
@@ -82,6 +82,7 @@ function Tool(){
 	this._tool;
 	
 	this.init=function(){
+		this._tool=="";
 		this._set_core("pen");
 	}
 	
@@ -102,6 +103,16 @@ function Tool(){
 	}
 	
 	this._set_core=function(tool){
+		if(this._tool==tool){
+			if(document.getElementById("edit_tool").style.display=="block"){
+				document.getElementById("edit_tool").style.display="none";
+			}else{
+				document.getElementById("edit_tool").style.display="block";
+			}
+			g_hand.resize(true);
+			return;
+		}
+		
 		var color="#c7e5f9";
 		document.getElementById("g_tool.set_pen").style["background-color"]=color;
 		document.getElementById("g_tool.set_eraser").style["background-color"]=color;
