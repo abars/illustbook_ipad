@@ -28,8 +28,12 @@ function ToolBox(){
 		txt+=this._add_button("g_tool.set_pen","ペン",s,margin);
 		txt+=this._add_button("g_tool.set_eraser","消しゴム",s,0);
 		txt+=this._add_button("g_tool.set_spoit","スポイト",s,0);
-		txt+=this._add_button("g_tool.set_hand","ハンド",s,0);
-
+		
+		if(g_chat.is_chat_mode()){
+			txt+=this._add_button("g_tool.set_hand","ハンド",s,0);
+		}else{
+			txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
+		}
 		txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+",s,margin);
 		txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-",s,0);
 		if(!(g_chat.is_view_mode())){

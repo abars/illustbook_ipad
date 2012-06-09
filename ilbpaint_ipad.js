@@ -20,6 +20,7 @@ var g_user=new User();
 var g_spoit=new Spoit();
 var g_tool=new Tool();
 var g_color_circle=new ColorCircle();
+var g_layer_move=new LayerMove();
 
 function ipad_init(){
 	ipad_get_instance();
@@ -142,6 +143,10 @@ function ipad_on_mouse_down(e){
 }
 
 function ipad_on_mouse_move_core(x,y){
+	if(g_layer_move.is_move_mode()){
+		g_layer_move.on_mouse_move(x,y);
+		return;
+	}
 	if(g_spoit.is_spoit_mode()){
 		g_spoit.on_mouse_move(x,y);
 		return;
@@ -155,6 +160,10 @@ function ipad_on_mouse_move_core(x,y){
 }
 
 function ipad_on_mouse_down_core(x,y){
+	if(g_layer_move.is_move_mode()){
+		g_layer_move.on_mouse_down(x,y,g_color_circle.get_layer_no());
+		return;
+	}
 	if(g_spoit.is_spoit_mode()){
 		g_spoit.on_mouse_down(x,y);
 		return;
@@ -174,6 +183,11 @@ function ipad_on_mouse_up(e){
 }
 
 function ipad_on_mouse_up_core(){
+	if(g_layer_move.is_move_mode()){
+		g_layer_move.on_mouse_up();
+		return;
+	}
+
 	if(g_hand.get_prevent_draw()){
 		g_draw_canvas.release_flag();
 	}

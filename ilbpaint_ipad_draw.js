@@ -189,6 +189,12 @@ function DrawCanvas(){
 		var g=image.data[1];
 		var b=image.data[2];
 		var a=image.data[3];
+		
+		if(a==0){
+			r=255;
+			g=255;
+			b=255;
+		}
 			
 		return (a<<24) | (r<<16) | (g<<8) | b;
 	}
