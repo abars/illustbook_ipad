@@ -31,11 +31,11 @@ function ToolBox(){
 		
 		if(g_chat.is_chat_mode()){
 			txt+=this._add_button("g_tool.set_hand","ハンド",s,0);
+			txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+",s,margin);
+			txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-",s,0);
 		}else{
 			txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
 		}
-		txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+",s,margin);
-		txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-",s,0);
 		if(!(g_chat.is_view_mode())){
 			txt+=this._add_button("ipad_switch_upload_form","投稿",s,margin);
 		}
@@ -58,8 +58,10 @@ function ToolBox(){
 			document.getElementById("g_tool.set_eraser").addEventListener("touchstart", function(e){g_tool.set_eraser();e.preventDefault();},false);
 			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_spoit();e.preventDefault();},false);
 			document.getElementById("g_tool.set_hand").addEventListener("touchstart", function(e){g_tool.set_hand();e.preventDefault();},false);
-			document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);e.preventDefault();},false);
-			document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);e.preventDefault();},false);
+			if(g_chat.is_chat_mode()){
+				document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);e.preventDefault();},false);
+				document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);e.preventDefault();},false);
+			}
 			if(!(g_chat.is_view_mode())){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
 			}

@@ -94,15 +94,16 @@ function ipad_event_init(){
 
 	can_div.addEventListener("mousemove", ipad_on_mouse_move, false);
 	can_div.addEventListener("mousedown", ipad_on_mouse_down , false);
-	//can_div.addEventListener("mouseup", ipad_on_mouse_up,false);
 	can_event.addEventListener("mouseup", ipad_on_mouse_up,false);	//画面外でUpされた場合用
 
 	can_div.addEventListener("touchmove", ipad_on_mouse_move, false);
 	can_div.addEventListener("touchstart", ipad_on_mouse_down , false);
-	//can_div.addEventListener("touchend", ipad_on_mouse_up,false);
 	can_event.addEventListener("touchend", ipad_on_mouse_up,false);
 	
-	can_div.addEventListener("gesturestart", function(e){ e.preventDefault();},false);
+	can_div.addEventListener("gesturestart", ipad_on_gesture_start,false);
+	can_div.addEventListener("gesturechange", ipad_on_gesture_change,false);
+	can_div.addEventListener("gestureend", ipad_on_gesture_end,false);
+
 	can_event.addEventListener("touchstart", function(e){ e.preventDefault();},false);
 
 	//横スクロール禁止
@@ -111,6 +112,26 @@ function ipad_event_init(){
 	
 	//リサイズ
 	window.onresize=function(e){ g_hand.resize(true); }
+}
+
+this._before_scale;
+
+function ipad_on_gesture_start(e){
+	e.preventDefault();
+	g_hand.zoom_ipad_begin();
+	this._before_scale=1.0;
+}
+
+function ipad_on_gesture_change(e){
+	e.preventDefault();
+	if(Math.abs(this._before_scale-e.scale)>0.05){
+		this._before_scale=e.scale;
+		g_hand.zoom_ipad_change(e.scale);
+	}
+}
+
+function ipad_on_gesture_end(e){
+	e.preventDefault();
 }
 
 function ipad_on_mouse_move(e){

@@ -90,13 +90,30 @@ function Hand(){
 	}
 	
 	this.zoom_in=function(){
-		this._zoom_core(1.2);
+		this._zoom_core(this._zoom*1.2);
+	}
+
+	this.zoom_out=function(){
+		this._zoom_core(this._zoom/1.2);
+	}
+	
+	this._ipad_zoom=1;
+	
+	this.zoom_ipad_begin=function(){
+		this._ipad_zoom=this._zoom;
+	}
+
+	this.zoom_ipad_change=function(m){
+		this._zoom_core(this._ipad_zoom*m);
 	}
 	
 	this._zoom_core=function(m){
-		var new_zoom=this._zoom*m;
-		if(new_zoom<0.5){
-			new_zoom=0.5;
+		var new_zoom=m;
+		if(new_zoom<1.0){
+			new_zoom=1.0;
+		}
+		if(new_zoom>3){
+			new_zoom=3;
 		}
 
 		this._hand_x-=(this._hand_x*new_zoom-this._hand_x*this._zoom)/new_zoom;
@@ -110,10 +127,6 @@ function Hand(){
 
 		this._zoom=new_zoom;
 		can_div.style.zoom=""+Math.floor(this._zoom*100)+"%";
-	}
-	
-	this.zoom_out=function(){
-		this._zoom_core(1/1.2);
 	}
 	
 	this.is_hand_mode=function(){
