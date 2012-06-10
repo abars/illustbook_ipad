@@ -77,6 +77,9 @@ function Hand(){
 			return;
 
 		var dist=Math.sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2));
+		
+		x=(x+x2)/2;
+		y=(y+y2)/2;
 
 		if(this._before_x){
 			this._hand_x+=x-this._before_x;

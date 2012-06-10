@@ -173,7 +173,7 @@ function ipad_on_mouse_move_core(x,y){
 		return;
 	}
 	if(g_hand.is_hand_mode()){
-		g_hand.on_mouse_move(x,y,0,0);
+		g_hand.on_mouse_move(x,y,x,y);
 		return;
 	}
 	g_draw_canvas.on_mouse_move(x,y);
@@ -190,7 +190,7 @@ function ipad_on_mouse_down_core(x,y){
 		return;
 	}
 	if(g_hand.is_hand_mode()){
-		g_hand.on_mouse_down(x,y,0,0);
+		g_hand.on_mouse_down(x,y,x,y);
 		return;
 	}
 	if(!(g_chat.is_view_mode())){
