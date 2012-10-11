@@ -82,7 +82,7 @@ function Palette(){
 	}
 	
 	this.get_color=function(){
-		if(g_tool.get_tool()=="eraser"){
+		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
 			return "#ffffff";
 		}
 		return this._color;

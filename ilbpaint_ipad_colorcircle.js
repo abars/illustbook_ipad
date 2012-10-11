@@ -53,8 +53,8 @@ function ColorCircle(){
 	this._cursor_x=0;
 	this._box_x=18;
 	this._box_y=30;
-	this._pen_size=new Array(30,70);
-	this._alpha=new Array(100,100);
+	this._pen_size=new Array(30,70,80,70);
+	this._alpha=new Array(100,100,100,100);
 	this._layer=1;
 	
 	this.init=function(){
@@ -348,10 +348,19 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 	this.on_tool_change=function(tool){
 		var canvas=document.getElementById("color_circle");
 		var context=canvas.getContext("2d");
-		if(tool=="pen"){
+		switch(tool){
+		case "pen":
 			this._tool=0;
-		}else{
+			break;
+		case "eraser":
 			this._tool=1;
+			break;
+		case "blur":
+			this._tool=2;
+			break;
+		case "blur_eraser":
+			this._tool=3;
+			break;
 		}
 		this._draw(context);
 	}

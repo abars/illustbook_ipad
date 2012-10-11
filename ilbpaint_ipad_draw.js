@@ -61,6 +61,7 @@ function DrawCanvas(){
 		var size=obj['size'];
 		var alpha=obj['alpha'];
 		var point=obj['point'];
+		var tool=obj['tool'];
 
 		var len=point.length/2;
 		var x_array=new Array(len);
@@ -73,7 +74,7 @@ function DrawCanvas(){
 		
 		var pos=0;
 		for(var i=0;i<x_array.length;i++){
-			if(this._draw_core(canvas,x_array,y_array,pos,color,size)){
+			if(this._draw_core(canvas,x_array,y_array,pos,color,size,tool)){
 				pos+=2;
 			}
 		}
@@ -95,7 +96,7 @@ function DrawCanvas(){
 		this._add_point(this._get_mx(x),this._get_my(y));
 		this._draw_flag=true;
 		
-		if(g_tool.get_tool()=="eraser"){
+		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
 			this._target_can=can_local[g_color_circle.get_layer_no()]
 			this._target_can.getContext("2d").globalCompositeOperation="destination-out"
 			this._target_can.getContext("2d").globalAlpha=g_color_circle.get_alpha();
@@ -113,7 +114,7 @@ function DrawCanvas(){
 			return;
 		}
 		this._add_point(this._get_mx(x),this._get_my(y));
-		if(this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_color_circle.get_size())){
+		if(this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_color_circle.get_size(),g_tool.get_tool())){
 			this._pos+=2;
 		}
 	}
@@ -127,7 +128,7 @@ function DrawCanvas(){
 			while(this._x_array.length<=2){
 				this._add_point(this._x_array[0],this._y_array[0]);
 			}
-			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_color_circle.get_size());
+			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_color_circle.get_size(),g_tool.get_tool());
 		}
 
 		g_draw_primitive.clear(can_drawing[g_color_circle.get_layer_no()]);
@@ -157,11 +158,15 @@ function DrawCanvas(){
 		this._y_array.push(y);
 	}
 	
-	this._draw_core=function(canvas,x_array,y_array,pos,color,size){
+	this._draw_core=function(canvas,x_array,y_array,pos,color,size,tool){
 		if(x_array.length-pos<=2){
 			return false;
 		}
-
+		
+		if(tool=="blur" || tool=="blur_eraser"){
+			return this._draw_blur(canvas,x_array,y_array,pos,color,size);
+		}
+		
 		var context = canvas.getContext("2d");
 		context.strokeStyle = color;
 		context.lineWidth = size;
@@ -175,6 +180,29 @@ function DrawCanvas(){
 		
 		return true;
 	} 
+	
+	this._draw_blur=function(canvas,x_array,y_array,pos,color,size){
+		var context = canvas.getContext("2d");
+		var sigma = 1.0;
+		var cnt=size*sigma;
+		var step=sigma*3/cnt;
+		context.save();
+		for(var i=step;i<sigma*3;i=i+step){
+			var gauss=1/(Math.sqrt(2*Math.PI)*sigma)*Math.exp(-(i*i)/(2*sigma*sigma));
+			context.strokeStyle = color;
+			context.shadowBlur = 30;
+			context.globalAlpha=gauss;
+			context.lineWidth = size*i;
+			context.lineCap = "round";
+			context.beginPath();
+			context.moveTo(x_array[pos], y_array[pos]);
+			context.quadraticCurveTo(x_array[pos+1], y_array[pos+1],x_array[pos+2],y_array[pos+2]);
+			context.stroke();
+			context.closePath();
+		}
+		context.restore();
+		return true;
+	}
 
 //-------------------------------------------------
 //スポイトコア
