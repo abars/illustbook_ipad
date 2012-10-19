@@ -19,7 +19,7 @@ function UndoRedo(){
 			g_buffer.redo_clear();
 			return;
 		}
-		var layer=g_color_circle.get_layer_no();
+		var layer=g_bottom_tool.get_layer_no();
 		var obj=new Object();
 		obj.layer=layer;
 		obj.image=this._get_now_image(layer);

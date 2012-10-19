@@ -26,9 +26,9 @@ function DrawCanvas(){
 	//コマンドを取得
 	this.get_command_list=function(){
 		var color=g_palette.get_color();
-		var size=g_color_circle.get_size();
-		var alpha=g_color_circle.get_alpha();
-		var layer=g_color_circle.get_layer_no();
+		var size=g_bottom_tool.get_size();
+		var alpha=g_bottom_tool.get_alpha();
+		var layer=g_bottom_tool.get_layer_no();
 		var tool=g_tool.get_tool();
 		
 		var txt="[{";
@@ -97,14 +97,14 @@ function DrawCanvas(){
 		this._draw_flag=true;
 		
 		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
-			this._target_can=can_local[g_color_circle.get_layer_no()]
+			this._target_can=can_local[g_bottom_tool.get_layer_no()]
 			this._target_can.getContext("2d").globalCompositeOperation="destination-out"
-			this._target_can.getContext("2d").globalAlpha=g_color_circle.get_alpha();
+			this._target_can.getContext("2d").globalAlpha=g_bottom_tool.get_alpha();
 		}else{
-			this._target_can=can_drawing[g_color_circle.get_layer_no()]
+			this._target_can=can_drawing[g_bottom_tool.get_layer_no()]
 		}
 		
-		can_drawing[g_color_circle.get_layer_no()].style.opacity=g_color_circle.get_alpha();
+		can_drawing[g_bottom_tool.get_layer_no()].style.opacity=g_bottom_tool.get_alpha();
 		
 		g_undo_redo.push();
 	}
@@ -114,7 +114,7 @@ function DrawCanvas(){
 			return;
 		}
 		this._add_point(this._get_mx(x),this._get_my(y));
-		if(this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_color_circle.get_size(),g_tool.get_tool())){
+		if(this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool())){
 			this._pos+=2;
 		}
 	}
@@ -128,10 +128,10 @@ function DrawCanvas(){
 			while(this._x_array.length<=2){
 				this._add_point(this._x_array[0],this._y_array[0]);
 			}
-			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_color_circle.get_size(),g_tool.get_tool());
+			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool());
 		}
 
-		g_draw_primitive.clear(can_drawing[g_color_circle.get_layer_no()]);
+		g_draw_primitive.clear(can_drawing[g_bottom_tool.get_layer_no()]);
 		this._target_can.getContext("2d").globalCompositeOperation="source-over"
 		this._target_can.getContext("2d").globalAlpha=1.0
 
@@ -212,7 +212,7 @@ function DrawCanvas(){
 		x=this._get_mx(x);
 		y=this._get_my(y);
 		
-		var image=can_local[g_color_circle.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
+		var image=can_local[g_bottom_tool.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
 		var r=image.data[0];
 		var g=image.data[1];
 		var b=image.data[2];

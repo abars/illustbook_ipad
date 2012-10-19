@@ -146,7 +146,7 @@ function Tool(){
 			}
 			this._set_pen_name();
 			g_hand.resize(true);
-			g_color_circle.on_tool_change(this.get_tool());
+			g_bottom_tool.on_tool_change(this.get_tool());
 			return;
 		}
 		
@@ -160,7 +160,7 @@ function Tool(){
 		document.getElementById("g_tool.set_"+tool).style["background-color"]=color;
 		
 		this._tool=tool;
-		g_color_circle.on_tool_change(this.get_tool());
+		g_bottom_tool.on_tool_change(this.get_tool());
 	}
 	
 	this.get_tool=function(){

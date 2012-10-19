@@ -79,6 +79,8 @@ function Palette(){
 			document.getElementById("palette"+i).style.width=w;
 			document.getElementById("palette"+i).style.height=h;
 		}
+
+		g_bottom_tool.update_color();
 	}
 	
 	this.get_color=function(){

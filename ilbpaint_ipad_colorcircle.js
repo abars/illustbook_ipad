@@ -20,42 +20,26 @@ function ColorCircle(){
 	
 	this._focus=0;
 	
-	this._color_circle_x=4;
-	this._color_circle_y=44;
-	this._color_circle_width=330;
-	this._color_circle_height=34;
+	this._color_circle_x=0;
+	this._color_circle_y=0;
+	this._color_circle_width=200;
+	this._color_circle_height=200;
 	
-	this._color_box_x=420-80;
-	this._color_box_y=4;
-	this._color_box_width=74;
-	this._color_box_height=74;
+	this._color_circle_r1=70;
+	this._color_circle_r2=90;
 	
-	this._size_slider_x=4;
-	this._size_slider_y=4;
-	this._size_slider_width=170;
-	this._size_slider_height=34;
-
-	this._alpha_slider_x=4+180+4;
-	this._alpha_slider_y=4;
-	this._alpha_slider_width=100;
-	this._alpha_slider_height=34;
-	
-	this._layer_x=420-120;
-	this._layer_y=4;
-	this._layer_width=34;
-	this._layer_height=34;
-	
-	this._tool=0;
+	this._color_box_width=this._color_circle_r1*2*0.7;
+	this._color_box_height=this._color_box_width;
+	this._color_box_x=(200-this._color_box_width)/2;
+	this._color_box_y=this._color_box_x;
 	
 	this._base_color=0x000000;
 	this._color=0x000000;
 	
-	this._cursor_x=0;
+	this._cursor_o=0;
+	
 	this._box_x=18;
 	this._box_y=30;
-	this._pen_size=new Array(30,70,80,70);
-	this._alpha=new Array(100,100,100,100);
-	this._layer=1;
 	
 	this.init=function(){
 		var canvas=document.getElementById("color_circle");
@@ -77,12 +61,12 @@ function ColorCircle(){
 
 		document.getElementById("color_circle").addEventListener("mousedown", ipad_color_circle_on_mouse_down,false);
 		document.getElementById("color_circle").addEventListener("mousemove", ipad_color_circle_on_mouse_move,false);
-		document.getElementById("bottom_tool").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
+		document.getElementById("palette_tool").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
 		document.getElementById("toolmenu").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
 		
 		document.getElementById("color_circle").addEventListener("touchstart", ipad_color_circle_on_mouse_down,false);
 		document.getElementById("color_circle").addEventListener("touchmove", ipad_color_circle_on_mouse_move,false);
-		document.getElementById("bottom_tool").addEventListener("touchend", ipad_color_circle_on_mouse_up,false);
+		document.getElementById("palette_tool").addEventListener("touchend", ipad_color_circle_on_mouse_up,false);
 		document.getElementById("toolmenu").addEventListener("touchend", ipad_color_circle_on_mouse_up,false);
 	}
 
@@ -94,16 +78,34 @@ function ColorCircle(){
 		var canvas=document.getElementById("color_circle");
 		var context=canvas.getContext("2d");
 
+/*
 		for(var x=0;x<this._color_circle_width;x++){
 			var obj=this._get_color(x);
 			context.fillStyle="rgb("+obj.r+","+obj.g+","+obj.b+")";
 			context.fillRect(x,0,1,this._color_circle_height);
 		}
+*/
+		var num_o=this._color_circle_width*8;
+		for(var i=0;i<num_o;i++){
+			var o=Math.PI*2*i/num_o;
+			var c=Math.cos(o);
+			var s=Math.sin(o);
+			var offset_x=this._color_circle_width/2;
+			var offset_y=this._color_circle_height/2;
+			var r1=this._color_circle_r1
+			var r2=this._color_circle_r2;
+			var obj=this._get_color(Math.floor(i*this._color_circle_width/num_o));
+			context.beginPath();
+			context.strokeStyle="rgb("+obj.r+","+obj.g+","+obj.b+")";
+			context.moveTo(offset_x+c*r1, offset_y+s*r1);
+			context.lineTo(offset_x+c*r2, offset_y+s*r2);
+			context.stroke();
+		}
 
 		this._color_circle=context.getImageData(0,0,this._color_circle_width,this._color_circle_height);
 		this._color_box=this._boxg(context,0,0,this._color_box_width,this._color_box_height,0x000000);
 		
-		this._draw(context);
+		//this._draw(context);
 	}
 	
 	this._draw=function(context){
@@ -118,16 +120,21 @@ function ColorCircle(){
 		
 		context.beginPath();
 		context.fillStyle="#000000";
-		context.rect(this._color_circle_x+this._cursor_x-2,this._color_circle_y-2,4,this._color_circle_height+4);
+		
+		var c=Math.cos(this._cursor_o);
+		var s=Math.sin(this._cursor_o);
+		var r=this._color_circle_r1;
+		var m=5;
+		var w=this._color_circle_r2-this._color_circle_r1+m*2;
+		context.save();
+		context.translate(this._color_circle_x+this._color_circle_width/2+c*r,this._color_circle_y+this._color_circle_height/2+s*r);
+		context.rotate(this._cursor_o);
+		context.rect(-m,-5,w,10);
 		context.closePath();
 		context.stroke();
+		context.restore();
 
 		this._draw_box(context);
-		
-		this._draw_slider(context,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height,this._pen_size[this._tool],true);
-this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height,this._alpha[this._tool],false);
-
-		this._draw_layer(context);
 		
 		//this._draw_preview(context);
 	}
@@ -161,86 +168,6 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 	}
 
 //-------------------------------------------------
-//レイヤー
-//-------------------------------------------------
-
-	this._draw_layer=function(context){
-		var s=10;
-		
-		context.beginPath();
-		context.strokeStyle="#5f5fef";
-		context.fillStyle="#c7e5f9";
-		context.rect(this._layer_x+s,this._layer_y+s,this._layer_width-s,this._layer_height-s);
-		if(this._layer==0){
-			context.fill();
-		}
-		context.closePath();
-		context.stroke();
-
-		context.beginPath();
-		context.strokeStyle="#5f5fef";
-		context.fillStyle="#c7e5f9";
-		context.rect(this._layer_x,this._layer_y,this._layer_width-s,this._layer_height-s);
-		if(this._layer==1){
-			context.fill();
-		}
-		context.closePath();
-		context.stroke();
-	}
-	
-	this.get_layer_no=function(){
-		return this._layer;
-	}
-
-//-------------------------------------------------
-//ペンサイズとα
-//-------------------------------------------------
-	
-	this.get_size=function(){
-		var r=this._pen_size[this._tool]/16;
-		r=r*r;
-		return Math.floor(r)+1;
-	}
-
-	this.get_alpha=function(){
-		if(g_tool.get_tool()=="eraser"){
-			return 1.0;
-		}
-		return this._alpha[this._tool]*1.0/this._alpha_slider_width;
-	}
-
-//-------------------------------------------------
-//スライダー
-//-------------------------------------------------
-
-	this._draw_slider=function(context,x,y,w,h,cursor,tri){
-		context.beginPath();
-		context.strokeStyle="#5f5fef";
-		context.fillStyle="#c7e5f9";
-		if(tri){
-			context.moveTo(x,y+h);
-			context.lineTo(x+w,y+h);
-			context.lineTo(x+w,y);
-			context.lineTo(x,y+h);
-		}else{
-			context.moveTo(x,y);
-			context.lineTo(x+w,y);
-			context.lineTo(x+w,y+h);
-			context.lineTo(x,y+h);
-			context.lineTo(x,y);
-		}
-		context.fill();
-		context.closePath();
-		context.stroke();
-
-		context.beginPath();
-		context.strokeStyle="#000000";
-		context.rect(x-2+cursor,y-2,4,h+4);
-		context.closePath();
-		context.stroke();
-	}
-
-//-------------------------------------------------
 //イベント
 //-------------------------------------------------
 
@@ -266,16 +193,6 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 		
 		var canvas=document.getElementById("color_circle");
 		var context=canvas.getContext("2d");
-		
-		if(this._focus==FOCUS_COLOR || (click && this._is_range(x,y,this._color_circle_x,this._color_circle_y,this._color_circle_width,this._color_circle_height))){
-			this._cursor_x=Math.floor(x-this._color_circle_x);
-			if(this._cursor_x<0) this._cursor_x=0;
-			if(this._cursor_x>=this._color_circle_width) this._cursor_x=this._color_circle_width-1;
-			var color=this._get_image_color(this._color_circle.data,this._cursor_x,0,this._color_circle_width);
-			this._set_base_color(color);
-			g_palette.set_color(this.get_hex_color());
-			this._focus=FOCUS_COLOR;
-		}
 
 		if(this._focus==FOCUS_BOX || (click && this._is_range(x,y,this._color_box_x,this._color_box_y,this._color_box_width,this._color_box_height))){
 			this._box_x=x-this._color_box_x;
@@ -290,25 +207,22 @@ this._draw_slider(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_
 			this._focus=FOCUS_BOX;
 		}
 		
-		if(this._focus==FOCUS_SIZE || (click && this._is_range(x,y,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height))){
-			this._pen_size[this._tool]=x-this._size_slider_x;
-			if(this._pen_size[this._tool]<0) this._pen_size[this._tool]=0;
-			if(this._pen_size[this._tool]>this._size_slider_width) this._pen_size[this._tool]=this._size_slider_width;
-			this._draw(context);
-			this._focus=FOCUS_SIZE;
-		}
-		
-		if(this._focus==FOCUS_ALPHA || (click && this._is_range(x,y,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height))){
-			this._alpha[this._tool]=x-this._alpha_slider_x;
-			if(this._alpha[this._tool]<0) this._alpha[this._tool]=0;
-			if(this._alpha[this._tool]>this._alpha_slider_width) this._alpha[this._tool]=this._alpha_slider_width;
-			this._draw(context);
-			this._focus=FOCUS_ALPHA;
-		}
+		if(this._focus==FOCUS_COLOR || (click && this._is_range(x,y,this._color_circle_x,this._color_circle_y,this._color_circle_width,this._color_circle_height) && this._focus!=FOCUS_BOX)){
+			var vx=Math.floor(x-this._color_circle_x)-this._color_circle_width/2;
+			var vy=Math.floor(y-this._color_circle_y)-this._color_circle_height/2;
+			this._cursor_o=Math.atan2(vy,vx);
+			if(this._cursor_o<0){
+				this._cursor_o=Math.PI*2+this._cursor_o;
+			}
+			
+			var pos=Math.floor(this._cursor_o*this._color_circle_width/(Math.PI*2));
 
-if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
-			this._layer=1-this._layer;
-			this._draw(context);
+			var obj=this._get_color(pos);
+			var color=0xff000000 | (obj.r<<16) | (obj.g<<8) | (obj.b);
+
+			this._set_base_color(color);
+			g_palette.set_color(this.get_hex_color());
+			this._focus=FOCUS_COLOR;
 		}
 		
 		this._is_hold=true;
@@ -343,26 +257,6 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 		var b=data[adr+2];
 		var a=0;//data[adr+3];
 		return (a<<24) | (r<<16) | (g<<8) | b;
-	}
-	
-	this.on_tool_change=function(tool){
-		var canvas=document.getElementById("color_circle");
-		var context=canvas.getContext("2d");
-		switch(tool){
-		case "pen":
-			this._tool=0;
-			break;
-		case "eraser":
-			this._tool=1;
-			break;
-		case "blur":
-			this._tool=2;
-			break;
-		case "blur_eraser":
-			this._tool=3;
-			break;
-		}
-		this._draw(context);
 	}
 	
 	this._set_base_color=function(color){
@@ -544,7 +438,7 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 }
 
 //-------------------------------------------------
-//イベント
+//グローバルイベント
 //-------------------------------------------------
 
 function ipad_color_circle_on_mouse_down(e){

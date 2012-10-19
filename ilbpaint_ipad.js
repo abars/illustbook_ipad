@@ -21,6 +21,7 @@ var g_spoit=new Spoit();
 var g_tool=new Tool();
 var g_color_circle=new ColorCircle();
 var g_layer_move=new LayerMove();
+var g_bottom_tool=new BottomTool();
 
 function ipad_init(){
 	ipad_get_instance();
@@ -33,6 +34,7 @@ function ipad_init(){
 	g_user.init();
 	g_spoit.init();
 	g_color_circle.init();
+	g_bottom_tool.init();
 	g_tool.init();
 	g_palette.init();
 	g_hand.init();
@@ -182,7 +184,7 @@ function ipad_on_mouse_move_core(x,y){
 
 function ipad_on_mouse_down_core(x,y){
 	if(g_layer_move.is_move_mode()){
-		g_layer_move.on_mouse_down(x,y,g_color_circle.get_layer_no());
+		g_layer_move.on_mouse_down(x,y,g_bottom_tool.get_layer_no());
 		return;
 	}
 	if(g_spoit.is_spoit_mode()){
@@ -221,6 +223,7 @@ function ipad_on_mouse_up_core(){
 	g_hand.on_mouse_up(0,0,0,0);
 	g_spoit.on_mouse_up();
 	g_color_circle.on_mouse_up();
+	g_bottom_tool.on_mouse_up();
 }
 
 function ipad_is_pc(){
