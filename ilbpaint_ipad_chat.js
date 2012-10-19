@@ -8,7 +8,7 @@ var GET_COMMAND_LIMIT=250;		//コマンドを読み込んでくる単位
 var WORKER_INTERVAL=3000;			//3秒に一回通信
 var SNAPSHOT_PERCENT=75;			//使用率が上がった場合にスナップショットを取る
 var WAIT_FOR_UNDO_MSEC=3000;	//UNDO用に3秒待機
-var SNAPSHOT_ALERT=0;					//スナップショットの状況を表示するかどうか
+var SNAPSHOT_ALERT=1;					//スナップショットの状況を表示するかどうか
 
 var CMD_DRAW=0;
 var CMD_TEXT=1;
@@ -23,6 +23,7 @@ var g_chat_key=null;	//チャットモードの場合はROOMのKEYが入る
 var g_chat_user_id=null;	//ユーザのID
 var g_chat_user_name="名無しさん";	//ユーザの名前
 var g_viewmode=false;			//見るだけのモードかどうか
+var g_initial_snapshot_created=false;	//最低一回はスナップショットを作成したか
 
 //チャットモードの場合は最初にinitが呼ばれる
 function chat_init(key,user_id,user_name,server_time,viewmode){
@@ -74,8 +75,9 @@ function chat_post_callback(obj){
 		if(percent<SNAPSHOT_PERCENT/2){
 			g_chat.reset_snapshot();
 		}
-		if(percent>=SNAPSHOT_PERCENT/2 && percent<SNAPSHOT_PERCENT){
+		if(percent>=SNAPSHOT_PERCENT/2 && (!g_initial_snapshot_created || percent<SNAPSHOT_PERCENT)){
 			g_chat.prepare_snapshot();	//スナップショットデータを準備
+			g_initial_snapshot_created=true;
 		}
 		if(percent>=SNAPSHOT_PERCENT){
 			g_chat.snapshot();	//スナップショットを作成して容量を削減
@@ -396,6 +398,9 @@ function Chat(){
 	//スナップショットを作成する
 	this.snapshot=function(){
 		if(this._initial_load){
+			return;
+		}
+		if(!this.snapshot_data){
 			return;
 		}
 		if(SNAPSHOT_ALERT){
