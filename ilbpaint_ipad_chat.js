@@ -77,7 +77,6 @@ function chat_post_callback(obj){
 		}
 		if(percent>=SNAPSHOT_PERCENT/2 && (!g_initial_snapshot_created || percent<SNAPSHOT_PERCENT)){
 			g_chat.prepare_snapshot();	//スナップショットデータを準備
-			g_initial_snapshot_created=true;
 		}
 		if(percent>=SNAPSHOT_PERCENT){
 			g_chat.snapshot();	//スナップショットを作成して容量を削減
@@ -367,7 +366,10 @@ function Chat(){
 		if(this.snapshot_data){
 			return;
 		}
-
+		if(this._initial_load){
+			return;
+		}
+		
 		if(SNAPSHOT_ALERT){
 			g_buffer._update_comment({"comment":"スナップショットを準備します。"});
 		}
@@ -393,6 +395,7 @@ function Chat(){
 		post_data["thumbnail"]=thumbnail;
 		
 		this.snapshot_data=post_data;
+		g_initial_snapshot_created=true;
 	}
 
 	//スナップショットを作成する
