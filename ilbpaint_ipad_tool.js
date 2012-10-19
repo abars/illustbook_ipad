@@ -129,6 +129,7 @@ function Tool(){
 	
 	this._set_core=function(tool){
 		if(this._tool==tool){
+			/*
 			if(!(tool=="pen" || tool=="eraser")){
 				if(document.getElementById("edit_tool").style.display=="block"){
 					document.getElementById("edit_tool").style.display="none";
@@ -136,6 +137,7 @@ function Tool(){
 					document.getElementById("edit_tool").style.display="block";
 				}
 			}
+			*/
 			if(!(g_chat.is_chat_mode())){
 				if(tool=="pen"){
 					this._is_blur_pen=!this._is_blur_pen;

@@ -76,6 +76,9 @@ function Upload(){
 		if(link_to_profile && link_to_profile.checked){
 			this._append("link_to_profile","on");
 		}
+		if(g_imported){
+			this._append("draw_time","-1");	//upload flag
+		}
 
 		var thumbnail_can=document.getElementById("canvas_thumbnail");
 		var thumbnail = this._header_split(thumbnail_can.toDataURL("image/jpeg",0.95));

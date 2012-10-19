@@ -47,6 +47,8 @@ function UndoRedo(){
 		
 		this._redo_array.push(redo_obj);
 
+		this._canvas_size_check(obj.image);
+
 		can_fixed[obj.layer].getContext("2d").putImageData(obj.image,0,0);
 		g_buffer.undo_redo_exec_on_local_tool();
 
@@ -70,10 +72,18 @@ function UndoRedo(){
 		undo_obj.image=this._get_now_image(layer);
 
 		this._undo_array.push(undo_obj);
+
+		this._canvas_size_check(obj.image);
 		
 		can_fixed[obj.layer].getContext("2d").putImageData(obj.image,0,0);
 		g_buffer.undo_redo_exec_on_local_tool();
 		
 		return false;
+	}
+	
+	this._canvas_size_check=function(image){
+		if(can_fixed[0].width!=image.width || can_fixed[0].height!=image.height){
+			g_import.change_canvas_size(image);
+		}
 	}
 }

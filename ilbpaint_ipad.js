@@ -22,6 +22,7 @@ var g_tool=new Tool();
 var g_color_circle=new ColorCircle();
 var g_layer_move=new LayerMove();
 var g_bottom_tool=new BottomTool();
+var g_import=new Import();
 
 function ipad_init(){
 	ipad_get_instance();
