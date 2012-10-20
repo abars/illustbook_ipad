@@ -189,4 +189,14 @@ function Upload(){
 		
 		thumbnail_can.getContext("2d").putImageData(image_data,0,0);
 	}
+	
+	this._is_upload_mode=false;
+	
+	this.switch_upload_form=function(){
+		this._is_upload_mode=!this._is_upload_mode;
+	}
+	
+	this.is_upload_mode=function(){
+		return this._is_upload_mode;
+	}
 }

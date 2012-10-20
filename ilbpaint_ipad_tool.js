@@ -12,7 +12,7 @@
 
 function ToolBox(){
 	this._add_button=function(cmd,info,s,margin){
-		var button_style="margin:2px;margin-left:4px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;background-color:#c7e5f9;";
+		var button_style="margin:2px;margin-left:4px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;color:#2f2fbf;background-color:#ffffff;";
 		var txt='<div id="'+cmd+'"';
 		if(ipad_is_pc()){
 			txt+=' onclick="javascript:'+cmd+'(false);"';
@@ -75,11 +75,20 @@ function ToolBox(){
 	}
 
 	this.update=function(){
-		var color="#c7e5f9";
+		/*
+		var color="#ffffff";
 		if(g_hand.is_hand_mode()){
 			color="#a7c5d9"
 		}
+		alert(document.getElementById("g_hand.hand_mode").style["background-color"]);
 		document.getElementById("g_hand.hand_mode").style["background-color"]=color;
+		*/
+		
+		var color="#ffffff";
+		if(g_upload.is_upload_mode()){
+			color="#a7c5d9";
+		}
+		document.getElementById("ipad_switch_upload_form").style["background-color"]=color;
 	}
 }
 
@@ -152,13 +161,13 @@ function Tool(){
 			return;
 		}
 		
-		var color="#c7e5f9";
+		var color="#ffffff";
 		document.getElementById("g_tool.set_pen").style["background-color"]=color;
 		document.getElementById("g_tool.set_eraser").style["background-color"]=color;
 		document.getElementById("g_tool.set_hand").style["background-color"]=color;
 		document.getElementById("g_tool.set_spoit").style["background-color"]=color;
 
-		color="#a7c5d9"
+		color="#c7e5f9"
 		document.getElementById("g_tool.set_"+tool).style["background-color"]=color;
 		
 		this._tool=tool;

@@ -142,7 +142,7 @@ function ColorCircle(){
 	this._draw_box=function(context){
 		context.beginPath();
 		var r=3;
-		if(this._box_y>=this._color_box_height*7/8){
+		if(this._box_y>=this._color_box_height/2){
 			context.strokeStyle="#ffffff";
 		}else{
 			context.strokeStyle="#000000";

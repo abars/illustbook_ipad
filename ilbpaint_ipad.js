@@ -249,6 +249,8 @@ function ipad_upload_callback(oj){
 
 function ipad_switch_upload_form(is_touch){
 	ipad_switch_form(is_touch,"upload_form");
+	g_upload.switch_upload_form();
+	g_tool_box.update();
 }
 
 function ipad_switch_palette_form(is_touch){

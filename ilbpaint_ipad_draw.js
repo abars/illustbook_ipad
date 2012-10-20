@@ -158,48 +158,74 @@ function DrawCanvas(){
 		this._y_array.push(y);
 	}
 	
+	this._is_same_point=function(x1,y1,x2,y2,x3,y3){
+		var d1=(x2-x1)*(x2-x1)+(y2-y1)*(y2-y1);
+		var d2=(x3-x1)*(x3-x1)+(y3-y1)*(y3-y1);
+		if(d1+d2<1*1){
+			return true;
+		}
+		return false;
+	}
+	
 	this._draw_core=function(canvas,x_array,y_array,pos,color,size,tool){
 		if(x_array.length-pos<=2){
 			return false;
 		}
+
+		var is_same_point=this._is_same_point(x_array[pos],y_array[pos],x_array[pos+1],y_array[pos+1],x_array[pos+2],y_array[pos+2]);
 		
 		if(tool=="blur" || tool=="blur_eraser"){
-			return this._draw_blur(canvas,x_array,y_array,pos,color,size);
+			return this._draw_blur(canvas,x_array,y_array,pos,color,size,is_same_point);
 		}
 		
 		var context = canvas.getContext("2d");
 		context.strokeStyle = color;
-		context.lineWidth = size;
+		context.fillStyle = color;
 		context.lineCap = "round";
 		
 		context.beginPath();
-		context.moveTo(x_array[pos], y_array[pos]);
-		context.quadraticCurveTo(x_array[pos+1], y_array[pos+1],x_array[pos+2],y_array[pos+2]);
+		if(is_same_point){
+			context.lineWidth = 1;
+			context.arc(x_array[pos],y_array[pos],size/2,0,2*Math.PI,false);
+			context.fill();
+		}else{
+			context.lineWidth = size;
+			context.moveTo(x_array[pos], y_array[pos]);
+			context.quadraticCurveTo(x_array[pos+1], y_array[pos+1],x_array[pos+2],y_array[pos+2]);
+		}
 		context.stroke();
 		context.closePath();
 		
 		return true;
 	} 
 	
-	this._draw_blur=function(canvas,x_array,y_array,pos,color,size){
+	this._draw_blur=function(canvas,x_array,y_array,pos,color,size,is_same_point){
 		var context = canvas.getContext("2d");
 		var sigma = 1.0;
 		var cnt=size*sigma;
 		var step=sigma*3/cnt;
 		context.save();
+
+		context.strokeStyle = color;
+		context.fillStyle = color;
+		context.shadowBlur = 30;
+		context.lineCap = "round";
+
+		context.beginPath();
 		for(var i=step;i<sigma*3;i=i+step){
 			var gauss=1/(Math.sqrt(2*Math.PI)*sigma)*Math.exp(-(i*i)/(2*sigma*sigma));
-			context.strokeStyle = color;
-			context.shadowBlur = 30;
 			context.globalAlpha=gauss;
+			var add=0;
+			if(is_same_point){
+				add=1;
+			}
 			context.lineWidth = size*i;
-			context.lineCap = "round";
-			context.beginPath();
 			context.moveTo(x_array[pos], y_array[pos]);
-			context.quadraticCurveTo(x_array[pos+1], y_array[pos+1],x_array[pos+2],y_array[pos+2]);
+			context.quadraticCurveTo(x_array[pos+1]+add, y_array[pos+1],x_array[pos+2]+add,y_array[pos+2]);
 			context.stroke();
-			context.closePath();
 		}
+		context.closePath();
+
 		context.restore();
 		return true;
 	}
