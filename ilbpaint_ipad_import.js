@@ -15,15 +15,28 @@ function ipad_import(){
 		var image = new Image();
 		reader.onload = function(evt) {
 			image.onload = function() {
-				g_undo_redo.push();
+				g_undo_redo.push_all();
 				g_layer.change_canvas_size(image);
 				
-				var context=can_local[0].getContext("2d");
+				var context=can_fixed[0].getContext("2d");
 				context.drawImage(image, 0, 0);
+				g_buffer.undo_redo_exec_on_local_tool();
 			}
 			image.src = evt.target.result;
 		}
 		reader.readAsDataURL(f);
 		g_imported=true;
 	}
+}
+
+function ipad_import_from_url(url){
+	var image = new Image();
+	image.onload = function() {
+		g_undo_redo.push_all();
+		g_layer.change_canvas_size(image);
+		var context=can_fixed[0].getContext("2d");
+		context.drawImage(image, 0, 0);
+		g_buffer.undo_redo_exec_on_local_tool();
+	}
+	image.src = "./img/"+url+".jpg";
 }

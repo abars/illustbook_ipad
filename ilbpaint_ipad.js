@@ -25,7 +25,7 @@ var g_bottom_tool=new BottomTool();
 var g_import=new Import();
 var g_layer=new Layer();
 
-function ipad_init(canvas_width,canvas_height){
+function ipad_init(canvas_width,canvas_height,canvas_url){
 	//キャンバス作成
 	g_layer.init(canvas_width,canvas_height);
 
@@ -45,6 +45,11 @@ function ipad_init(canvas_width,canvas_height){
 	g_tool.init();
 	g_palette.init();
 	g_hand.init();
+	
+	//インポート
+	if(canvas_url!=""){
+		ipad_import_from_url(canvas_url);
+	}
 	
 	if(g_viewmode){
 		g_buffer._update_comment({"comment":"閲覧モードで起動しました。書き込みはできません。"});
