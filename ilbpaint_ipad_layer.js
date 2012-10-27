@@ -185,6 +185,7 @@ function Layer(){
 	}
 
 	this.on_click_layer=function(layer_no,is_touch){
+		layer_no=Number(layer_no);
 		if(this._layer==layer_no){
 			this._layer_enable[this._layer]=!this._layer_enable[this._layer];
 		}else{
