@@ -3,6 +3,10 @@
 //copyright 2010-2012 ABARS all rights reserved.
 //-------------------------------------------------
 
+var SUB_TOOL_NONE=0;
+var SUB_TOOL_COLOR=1;
+var SUB_TOOL_LAYER=2;
+
 function BottomTool(){
 	this._canvas_width;
 	this._canvas_height;
@@ -31,8 +35,8 @@ function BottomTool(){
 	
 	this._pen_size=new Array(30,70,80,70);
 	this._alpha=new Array(100,100,100,100);
-	this._layer=1;
-	this._palette=0;
+	
+	this._sub_tool=SUB_TOOL_NONE;
 	
 	this.init=function(){
 		var canvas=document.getElementById("pen_tools");
@@ -108,25 +112,12 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		
 		context.beginPath();
 		context.strokeStyle="#5f5fef";
-		if(this._layer==0){
-			context.fillStyle="#c7e5f9";
-		}else{
-			context.fillStyle="#ffffff";
-		}
 		context.rect(this._layer_x+s,this._layer_y+s,this._layer_width-s,this._layer_height-s);
-		context.fill();
 		context.closePath();
 		context.stroke();
 
 		context.beginPath();
-		context.strokeStyle="#5f5fef";
-		if(this._layer==1){
-			context.fillStyle="#c7e5f9";
-		}else{
-			context.fillStyle="#ffffff";
-		}
 		context.rect(this._layer_x,this._layer_y,this._layer_width-s,this._layer_height-s);
-		context.fill();
 		context.closePath();
 		context.stroke();
 	}
@@ -146,10 +137,6 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		context.stroke();
 	}
 	
-	this.get_layer_no=function(){
-		return this._layer;
-	}
-
 //-------------------------------------------------
 //ペンサイズとα
 //-------------------------------------------------
@@ -259,25 +246,63 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		}
 
 if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
-			this._layer=1-this._layer;
-			this._draw(context);
+			if(this._sub_tool==SUB_TOOL_LAYER){
+				this._sub_tool=SUB_TOOL_NONE;
+			}else{
+				this._sub_tool=SUB_TOOL_LAYER;
+			}
+			this._update_sub_tool();
 		}
 		
 		if(click && this._is_range(x,y,this._palette_x,this._palette_y,this._palette_width,this._palette_height)){
-			this._palette=1-this._palette;
-			if(this._palette){
-				document.getElementById("palette_tool").style.display="block";
+			if(this._sub_tool==SUB_TOOL_COLOR){
+				this._sub_tool=SUB_TOOL_NONE;
 			}else{
-				document.getElementById("palette_tool").style.display="none";
+				this._sub_tool=SUB_TOOL_COLOR;
 			}
-			var tool_height=document.getElementById("bottom_tool").clientHeight;
-			document.getElementById("palette_tool").style.bottom=tool_height;
+			this._update_sub_tool();
 		}
 
 		this._is_hold=true;
 	}
 	
+	this._update_sub_tool=function(){
+		if(this._sub_tool!=SUB_TOOL_NONE){
+			document.getElementById("palette_tool").style.display="block";
+		}else{
+			document.getElementById("palette_tool").style.display="none";
+		}
+		var tool_height=document.getElementById("bottom_tool").clientHeight;
+		document.getElementById("palette_tool").style.bottom=tool_height;
+		if(this._sub_tool==SUB_TOOL_COLOR){
+			document.getElementById("palette_tool_color").style.display="block";
+		}else{
+			document.getElementById("palette_tool_color").style.display="none";
+		}
+		if(this._sub_tool==SUB_TOOL_LAYER){
+			document.getElementById("palette_tool_layer").style.display="block";
+		}else{
+			document.getElementById("palette_tool_layer").style.display="none";
+		}
+		
+		this._show_layer_tool();
+	}
 	
+	this.update_layer_thumbnail=function(){
+		if(this._sub_tool!=SUB_TOOL_LAYER){
+			return;
+		}
+		g_layer.update_thumbnail();
+	}
+	
+	this._show_layer_tool=function(){
+		if(this._sub_tool!=SUB_TOOL_LAYER){
+			return;
+		}
+		g_layer.show_layer_tool();
+		this.update_layer_thumbnail();
+	}
+
 	this.on_mouse_move=function(x,y){
 		if(this._is_hold){
 			this.on_mouse_down_core(x,y,false);
@@ -287,6 +312,7 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 	this.on_mouse_up=function(){
 		this._is_hold=false;
 		this._focus=FOCUS_NONE;
+		this.update_layer_thumbnail();
 	}
 
 	this._get_mx=function(x){
@@ -329,7 +355,6 @@ if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,thi
 		this._redraw();
 	}
 }
-
 
 //-------------------------------------------------
 //グローバルイベント

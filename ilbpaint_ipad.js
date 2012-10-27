@@ -23,11 +23,17 @@ var g_color_circle=new ColorCircle();
 var g_layer_move=new LayerMove();
 var g_bottom_tool=new BottomTool();
 var g_import=new Import();
+var g_layer=new Layer();
 
-function ipad_init(){
+function ipad_init(canvas_width,canvas_height){
+	//キャンバス作成
+	g_layer.init(canvas_width,canvas_height);
+
+	//イベント登録
 	ipad_get_instance();
 	ipad_event_init();
 	
+	//クラス初期化
 	g_tool_box.init();
 	g_chat.init();
 	g_buffer.init();
@@ -69,14 +75,7 @@ var g_size_width;
 var g_window_height;
 
 function ipad_get_instance(){
-	for(var layer=0;layer<LAYER_N;layer++){
-		can_fixed[layer] = document.getElementById("canvas_fixed_"+layer); 
-		can_local[layer] = document.getElementById("canvas_local_"+layer); 
-		can_drawing[layer] = document.getElementById("canvas_drawing_"+layer);
-	}
-	
-	//g_draw_primitive.fill_white(can_fixed[0]);
-	//g_draw_primitive.fill_white(can_local[0]);
+	g_layer.get_canvas(can_fixed,can_local,can_drawing);
 	
 	can_work = document.getElementById("canvas_work");
 	can_div = document.getElementById("canvas_div"); 
@@ -180,12 +179,11 @@ function ipad_on_mouse_move_core(x,y){
 		return;
 	}
 	g_draw_canvas.on_mouse_move(x,y);
-
 }
 
 function ipad_on_mouse_down_core(x,y){
 	if(g_layer_move.is_move_mode()){
-		g_layer_move.on_mouse_down(x,y,g_bottom_tool.get_layer_no());
+		g_layer_move.on_mouse_down(x,y,g_layer.get_layer_no());
 		return;
 	}
 	if(g_spoit.is_spoit_mode()){

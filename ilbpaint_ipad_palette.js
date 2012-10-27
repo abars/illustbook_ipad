@@ -47,7 +47,7 @@ function Palette(){
 		this._palette_color_n=20;
 		var txt="";
 		for(var i=0;i<this._palette_color_n;i++){
-			txt+="<div id='palette"+i+"'style='float:left;width:"+g_color_width+"px;height:"+g_color_width+"px;background-color:"+this._palette_color[i]+";'";
+			txt+="<div id='palette"+i+"'style='float:left;margin:1px;border-radius:2px;width:"+g_color_width+"px;height:"+g_color_width+"px;background-color:"+this._palette_color[i]+";'";
 			if(ipad_is_pc()){
 				txt+=" onclick='javascript:g_palette.on_click("+i+",false);'";
 			}
@@ -69,10 +69,10 @@ function Palette(){
 			var w=g_color_width;
 			var h=g_color_width;
 			var alpha=1;
-			if(i==this._selecting_no){
-				w=g_color_width-4;
-				h=g_color_width-4;
-				document.getElementById("palette"+i).style.border="solid 2px #ffffff";
+			if(i!=this._selecting_no){
+				w=g_color_width-8;
+				h=g_color_width-8;
+				document.getElementById("palette"+i).style.border="solid 4px #ffffff";
 			}else{
 				document.getElementById("palette"+i).style.border="none";
 			}

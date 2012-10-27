@@ -17,9 +17,10 @@ function UndoRedo(){
 	this.push=function(){
 		if(g_chat.is_chat_mode()){
 			g_buffer.redo_clear();
+			this.update_status();
 			return;
 		}
-		var layer=g_bottom_tool.get_layer_no();
+		var layer=g_layer.get_layer_no();
 		var obj=new Object();
 		obj.layer=layer;
 		obj.image=this._get_now_image(layer);
@@ -28,11 +29,13 @@ function UndoRedo(){
 		while(this._undo_array.length>=UNDO_MAX){
 			this._undo_array.shift();
 		}
+		this.update_status();
 	}
 
 	this.undo=function(is_touch){
 		if(g_chat.is_chat_mode()){
 			g_buffer.undo();
+			this.update_status();
 			return false;
 		}
 		if(this._undo_array.length<=0){
@@ -52,12 +55,15 @@ function UndoRedo(){
 		can_fixed[obj.layer].getContext("2d").putImageData(obj.image,0,0);
 		g_buffer.undo_redo_exec_on_local_tool();
 
+		this.update_status();
+
 		return false;
 	}
 	
 	this.redo=function(is_touch){
 		if(g_chat.is_chat_mode()){
 			g_buffer.redo();
+			this.update_status();
 			return false;
 		}
 		if(this._redo_array.length<=0){
@@ -77,13 +83,34 @@ function UndoRedo(){
 		
 		can_fixed[obj.layer].getContext("2d").putImageData(obj.image,0,0);
 		g_buffer.undo_redo_exec_on_local_tool();
+
+		this.update_status();
 		
 		return false;
 	}
 	
+	this.update_status=function(){
+		g_tool.update_undo_redo_status();
+		g_bottom_tool.update_layer_thumbnail();
+	}
+	
 	this._canvas_size_check=function(image){
 		if(can_fixed[0].width!=image.width || can_fixed[0].height!=image.height){
-			g_import.change_canvas_size(image);
+			g_layer.change_canvas_size(image);
 		}
+	}
+	
+	this.is_redo_exist=function(){
+		if(g_chat.is_chat_mode()){
+			return g_buffer.is_redo_exist();
+		}
+		return (this._redo_array.length>0);
+	}
+
+	this.is_undo_exist=function(){
+		if(g_chat.is_chat_mode()){
+			return g_buffer.is_undo_exist();
+		}
+		return (this._undo_array.length>0);
 	}
 }

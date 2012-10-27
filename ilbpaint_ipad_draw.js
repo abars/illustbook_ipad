@@ -28,7 +28,7 @@ function DrawCanvas(){
 		var color=g_palette.get_color();
 		var size=g_bottom_tool.get_size();
 		var alpha=g_bottom_tool.get_alpha();
-		var layer=g_bottom_tool.get_layer_no();
+		var layer=g_layer.get_layer_no();
 		var tool=g_tool.get_tool();
 		
 		var txt="[{";
@@ -97,14 +97,14 @@ function DrawCanvas(){
 		this._draw_flag=true;
 		
 		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
-			this._target_can=can_local[g_bottom_tool.get_layer_no()]
+			this._target_can=can_local[g_layer.get_layer_no()]
 			this._target_can.getContext("2d").globalCompositeOperation="destination-out"
 			this._target_can.getContext("2d").globalAlpha=g_bottom_tool.get_alpha();
 		}else{
-			this._target_can=can_drawing[g_bottom_tool.get_layer_no()]
+			this._target_can=can_drawing[g_layer.get_layer_no()]
 		}
 		
-		can_drawing[g_bottom_tool.get_layer_no()].style.opacity=g_bottom_tool.get_alpha();
+		can_drawing[g_layer.get_layer_no()].style.opacity=g_bottom_tool.get_alpha();
 		
 		g_undo_redo.push();
 	}
@@ -131,7 +131,7 @@ function DrawCanvas(){
 			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool());
 		}
 
-		g_draw_primitive.clear(can_drawing[g_bottom_tool.get_layer_no()]);
+		g_draw_primitive.clear(can_drawing[g_layer.get_layer_no()]);
 		this._target_can.getContext("2d").globalCompositeOperation="source-over"
 		this._target_can.getContext("2d").globalAlpha=1.0
 
@@ -238,7 +238,7 @@ function DrawCanvas(){
 		x=this._get_mx(x);
 		y=this._get_my(y);
 		
-		var image=can_local[g_bottom_tool.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
+		var image=can_local[g_layer.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
 		var r=image.data[0];
 		var g=image.data[1];
 		var b=image.data[2];
@@ -267,12 +267,12 @@ function DrawCanvas(){
 		return (y-canvasRect.top*g_hand.get_zoom())/g_hand.get_zoom();
 	}
 	
-	this.clear=function(){
+	this.clear=function(layer){
 		g_undo_redo.push();
-		for(var layer=0;layer<LAYER_N;layer++){
+		//for(var layer=0;layer<LAYER_N;layer++){
 			g_draw_primitive.clear(can_fixed[layer]);
 			g_draw_primitive.clear(can_local[layer]);
-		}
+		//}
 	}
 }
 

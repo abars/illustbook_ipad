@@ -7,7 +7,7 @@ var WATCH_DOG_COUNT=10;			//10回分の時間successが帰って来なかった�
 var GET_COMMAND_LIMIT=250;		//コマンドを読み込んでくる単位
 var WORKER_INTERVAL=3000;			//3秒に一回通信
 var SNAPSHOT_PERCENT=75;			//使用率が上がった場合にスナップショットを取る
-var WAIT_FOR_UNDO_MSEC=3000;	//UNDO用に3秒待機
+var WAIT_FOR_UNDO_MSEC=2000;	//UNDO用に2秒待機
 var SNAPSHOT_ALERT=0;					//スナップショットの状況を表示するかどうか
 
 var CMD_DRAW=0;
@@ -278,6 +278,7 @@ function Chat(){
 		}
 		this._posting_count=cmd_list.length;
 		illustbook.request.post_async("./chat?mode=post_command&key="+g_chat_key,post_data,chat_post_callback);
+		g_tool.update_undo_redo_status();
 	}
 	
 	this._send_success=function(){

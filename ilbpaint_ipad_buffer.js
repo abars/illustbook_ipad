@@ -176,8 +176,7 @@ function Buffer(){
 //-------------------------------------------------
 
 	this.undo=function(){
-		var posted_count=g_chat.get_posted_count();
-		if(this._local_cmd_list.length+this._local_posted_cnt<=posted_count){
+		if(!this.is_undo_exist()){
 			return;
 		}
 		var cmd=this._local_cmd_list[this._local_cmd_list.length-1]
@@ -205,5 +204,17 @@ function Buffer(){
 	this.get_now_time=function(){
 		var date = new Date();
 		return date.getTime()
+	}
+
+	this.is_redo_exist=function(){
+		return (this._redo_buffer.length>0);
+	}
+
+	this.is_undo_exist=function(){
+		var posted_count=g_chat.get_posted_count();
+		if(this._local_cmd_list.length+this._local_posted_cnt<=posted_count){
+			return false;
+		}
+		return true;
 	}
 };

@@ -7,12 +7,12 @@
 //ツールボックス
 //-------------------------------------------------
 
-//var button_style="border:solid 1px #333333;border-radius:48px;width:48px;height:48px;";
-//var inner_style="margin-left:4px;margin-top:8px;width:40px;";
+var TOOL_ENABLE_COLOR="#2f2fbf";
+var TOOL_DISABLE_COLOR="#efefff";
 
 function ToolBox(){
 	this._add_button=function(cmd,info,s,margin){
-		var button_style="margin:2px;margin-left:4px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;color:#2f2fbf;background-color:#ffffff;";
+		var button_style="margin:2px;margin-left:4px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;color:"+TOOL_ENABLE_COLOR+";background-color:#ffffff;";
 		var txt='<div id="'+cmd+'"';
 		if(ipad_is_pc()){
 			txt+=' onclick="javascript:'+cmd+'(false);"';
@@ -20,7 +20,7 @@ function ToolBox(){
 		txt+=' style="'+button_style+'margin-top:'+margin+'px;">'+info+'</div>';
 		return txt;
 	}
-	
+
 	this.init=function(){
 		var txt="";
 		var s=g_button_width+20;
@@ -42,9 +42,11 @@ function ToolBox(){
 		if(!(g_chat.is_view_mode())){
 			txt+=this._add_button("ipad_switch_upload_form","投稿",s,margin);
 		}
+		/*
 		if(!(g_chat.is_chat_mode())){
 			txt+=this._add_button("g_draw_canvas.clear","クリア",s,margin);
 		}
+		*/
 		
 		//デバッグ
 		if(SNAPSHOT_ALERT){
@@ -68,9 +70,9 @@ function ToolBox(){
 			if(!(g_chat.is_view_mode())){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
 			}
-			if(!(g_chat.is_chat_mode())){
-				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);e.preventDefault();},false);
-			}
+//			if(!(g_chat.is_chat_mode())){
+//				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);e.preventDefault();},false);
+//			}
 		}
 	}
 
@@ -78,7 +80,7 @@ function ToolBox(){
 		/*
 		var color="#ffffff";
 		if(g_hand.is_hand_mode()){
-			color="#a7c5d9"
+			color="#c7e5f9"
 		}
 		alert(document.getElementById("g_hand.hand_mode").style["background-color"]);
 		document.getElementById("g_hand.hand_mode").style["background-color"]=color;
@@ -86,7 +88,7 @@ function ToolBox(){
 		
 		var color="#ffffff";
 		if(g_upload.is_upload_mode()){
-			color="#a7c5d9";
+			color="#c7e5f9";
 		}
 		document.getElementById("ipad_switch_upload_form").style["background-color"]=color;
 	}
@@ -102,6 +104,7 @@ function Tool(){
 	this.init=function(){
 		this._tool=="";
 		this._set_core("pen");
+		this.update_undo_redo_status();
 	}
 	
 	this.set_hand=function(){
@@ -186,6 +189,20 @@ function Tool(){
 			}
 		}
 		return this._tool;
+	}
+
+	this.update_undo_redo_status=function(){
+		var color=TOOL_DISABLE_COLOR;
+		if(g_undo_redo.is_undo_exist()){
+			color=TOOL_ENABLE_COLOR;
+		}
+		document.getElementById("g_undo_redo.undo").style.color=color;
+
+		color=TOOL_DISABLE_COLOR;
+		if(g_undo_redo.is_redo_exist()){
+			color=TOOL_ENABLE_COLOR;
+		}
+		document.getElementById("g_undo_redo.redo").style.color=color;
 	}
 }
 
