@@ -146,7 +146,7 @@ function Layer(){
 		if(this._layer+1>=LAYER_N){
 			return;
 		}
-		g_undo_redo.push();
+		g_undo_redo.push_all();
 		this._canvas_swap(can_fixed[this._layer],can_fixed[this._layer+1]);
 		this._canvas_swap(can_local[this._layer],can_local[this._layer+1]);
 		this._layer=this._layer+1;
@@ -157,7 +157,7 @@ function Layer(){
 		if(this._layer-1<0){
 			return;
 		}
-		g_undo_redo.push();
+		g_undo_redo.push_all();
 		this._canvas_swap(can_fixed[this._layer],can_fixed[this._layer-1]);
 		this._canvas_swap(can_local[this._layer],can_local[this._layer-1]);
 		this._layer=this._layer-1;

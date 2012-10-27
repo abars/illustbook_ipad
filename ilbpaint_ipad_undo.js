@@ -5,16 +5,41 @@
 
 var UNDO_MAX=16;
 
+var UNDO_MODE_ONE=0;
+var UNDO_MODE_ALL=1;
+
 function UndoRedo(){
 	this._undo_array=new Array();
 	this._redo_array=new Array();
 	
-	this._get_now_image=function(layer){
+	this._get_now_image=function(layer,mode){
+		var obj=new Array();
+		if(mode==UNDO_MODE_ONE){
+			obj.push(this._get_now_image_one(layer));
+			return obj;
+		}
+		if(mode==UNDO_MODE_ALL){
+			for(var layer=0;layer<LAYER_N;layer++){
+				obj.push(this._get_now_image_one(layer));
+			}
+			return obj;
+		}
+	}
+	
+	this._get_now_image_one=function(layer){
 		var image_data = can_fixed[layer].getContext("2d").getImageData(0,0,can_fixed[layer].width, can_fixed[layer].height);
 		return image_data;
 	}
-
+	
 	this.push=function(){
+		this.push_core(UNDO_MODE_ONE);
+	}
+	
+	this.push_all=function(){
+		this.push_core(UNDO_MODE_ALL);
+	}
+
+	this.push_core=function(mode){
 		if(g_chat.is_chat_mode()){
 			g_buffer.redo_clear();
 			this.update_status();
@@ -22,8 +47,9 @@ function UndoRedo(){
 		}
 		var layer=g_layer.get_layer_no();
 		var obj=new Object();
+		obj.mode=mode;
 		obj.layer=layer;
-		obj.image=this._get_now_image(layer);
+		obj.image=this._get_now_image(layer,mode);
 		this._undo_array.push(obj);
 		this._redo_array=new Array();
 		while(this._undo_array.length>=UNDO_MAX){
@@ -43,21 +69,37 @@ function UndoRedo(){
 		}
 		var obj=this._undo_array.pop();
 		var layer=obj.layer;
+		var mode=obj.mode;
 
 		var redo_obj=new Object();
 		redo_obj.layer=layer;
-		redo_obj.image=this._get_now_image(layer);
+		redo_obj.mode=mode;
+		redo_obj.image=this._get_now_image(layer,mode);
 		
 		this._redo_array.push(redo_obj);
 
-		this._canvas_size_check(obj.image);
+		this._canvas_size_check(obj.image[0]);
 
-		can_fixed[obj.layer].getContext("2d").putImageData(obj.image,0,0);
+		this._put_image(obj);
 		g_buffer.undo_redo_exec_on_local_tool();
 
 		this.update_status();
 
 		return false;
+	}
+	
+	this._put_image=function(obj){
+		if(obj.mode==UNDO_MODE_ONE){
+			can_fixed[obj.layer].getContext("2d").putImageData(obj.image[0],0,0);
+		}
+		if(obj.mode==UNDO_MODE_ALL){
+			for(var layer=0;layer<obj.image.length;layer++){
+				can_fixed[layer].getContext("2d").putImageData(obj.image[layer],0,0);
+			}
+			for(var layer=obj.image.length;layer<LAYER_N;layer++){
+				g_draw_primitive.clear(can_fixed[layer]);
+			}
+		}
 	}
 	
 	this.redo=function(is_touch){
@@ -72,16 +114,18 @@ function UndoRedo(){
 
 		var obj=this._redo_array.pop();
 		var layer=obj.layer;
+		var mode=obj.mode;
 
 		var undo_obj=new Object();
 		undo_obj.layer=layer;
-		undo_obj.image=this._get_now_image(layer);
+		undo_obj.mode=mode;
+		undo_obj.image=this._get_now_image(layer,mode);
 
 		this._undo_array.push(undo_obj);
 
-		this._canvas_size_check(obj.image);
+		this._canvas_size_check(obj.image[0]);
 		
-		can_fixed[obj.layer].getContext("2d").putImageData(obj.image,0,0);
+		this._put_image(obj);
 		g_buffer.undo_redo_exec_on_local_tool();
 
 		this.update_status();
