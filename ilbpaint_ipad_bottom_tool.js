@@ -152,9 +152,9 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 	}
 
 	this.get_alpha=function(){
-		if(g_tool.get_tool()=="eraser"){
-			return 1.0;
-		}
+		//if(g_tool.get_tool()=="eraser"){
+		//	return 1.0;
+		//}
 		return this._alpha[this._tool]*1.0/100;
 	}
 

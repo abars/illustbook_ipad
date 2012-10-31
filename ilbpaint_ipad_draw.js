@@ -99,7 +99,7 @@ function DrawCanvas(){
 		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
 			this._target_can=can_local[g_layer.get_layer_no()]
 			this._target_can.getContext("2d").globalCompositeOperation="destination-out"
-			this._target_can.getContext("2d").globalAlpha=g_bottom_tool.get_alpha();
+			this._target_can.getContext("2d").globalAlpha=1.0;
 		}else{
 			this._target_can=can_drawing[g_layer.get_layer_no()]
 		}
