@@ -147,13 +147,7 @@ function Upload(){
 	}
 	
 	this._rendering=function(){
-		var image_can=document.getElementById("canvas_rendering");
-		g_draw_primitive.fill_white(image_can);
-		var context=image_can.getContext("2d")
-		for(var layer=0;layer<LAYER_N;layer++){
-			context.drawImage(can_fixed[layer],0,0);
-			context.drawImage(can_local[layer],0,0);
-		}
+		g_rendering.rendering();
 	}
 
 	//平均画素法で高品質のサムネイルを作成

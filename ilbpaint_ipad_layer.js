@@ -3,14 +3,12 @@
 //copyright 2010-2012 ABARS all rights reserved.
 //-------------------------------------------------
 
-var LAYER_N=2;
-
 function Layer(){
 	this._canvas_width=0;
 	this._canvas_height=0;
 
 	this._layer=0;
-	this._layer_enable=new Array();
+	this._layer_mode=new Array();
 
 	this.init=function(canvas_width,canvas_height){
 		this._canvas_width=canvas_width;
@@ -53,7 +51,7 @@ function Layer(){
 		txt+='<canvas id="canvas_local_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px" style="position: absolute; top: 32; left: 32;z-index: '+(layer*3+2)+';"></canvas>';
 		txt+='<canvas id="canvas_drawing_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px"  style="position: absolute; top: 32; left: 32;z-index: '+(layer*3+3)+';"></canvas>';
 		LAYER_N++;
-		this._layer_enable.push(1);
+		this._layer_mode.push(LAYER_MODE_NORMAL);
 		
 		var new_layer=document.createElement("div");
 		new_layer.innerHTML=txt;
@@ -88,11 +86,10 @@ function Layer(){
 			txt+="<div style='padding-left:4px;float:left;'>";
 			txt+="レイヤー"+(layer+1)+"　";
 			var layer_enable="";
-			if(this._layer_enable[layer]){
-				txt+="表示";
+			txt+=LAYER_MODE_NAME[this._layer_mode[layer]];
+			if(this._layer_mode[layer]){
 				layer_enable="block";
 			}else{
-				txt+="非表示";
 				layer_enable="none";
 			}
 			can_local[layer].style.display=layer_enable;
@@ -128,6 +125,10 @@ function Layer(){
 
 	this.get_layer_no=function(){
 		return this._layer;
+	}
+	
+	this.get_layer_mode=function(layer){
+		return this._layer_mode[layer];
 	}
 	
 	this.clear_layer=function(){
@@ -187,7 +188,10 @@ function Layer(){
 	this.on_click_layer=function(layer_no,is_touch){
 		layer_no=Number(layer_no);
 		if(this._layer==layer_no){
-			this._layer_enable[this._layer]=!this._layer_enable[this._layer];
+			this._layer_mode[this._layer]++;
+			if(this._layer_mode[this._layer]>=LAYER_MODE_N){
+				this._layer_mode[this._layer]=0;
+			}
 		}else{
 			this._layer=layer_no;
 		}

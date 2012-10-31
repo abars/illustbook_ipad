@@ -143,7 +143,7 @@ function Buffer(){
 				var color=cmd_object.color;
 				var tool=cmd_object.tool;
 				context[layer].globalAlpha=alpha
-				if(tool=="eraser"){
+				if(tool=="eraser" || tool=="blur_eraser"){
 					context[layer].globalCompositeOperation="destination-out";
 				}
 				context[layer].drawImage(can_work,0,0);

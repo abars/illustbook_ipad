@@ -234,11 +234,11 @@ function DrawCanvas(){
 //スポイトコア
 //-------------------------------------------------
 
-	this.get_color_of_canvas=function(x,y){
+	this.get_color_of_canvas=function(canvas,x,y){
 		x=this._get_mx(x);
 		y=this._get_my(y);
 		
-		var image=can_local[g_layer.get_layer_no()].getContext("2d").getImageData(x,y,1,1);
+		var image=canvas.getContext("2d").getImageData(x,y,1,1);
 		var r=image.data[0];
 		var g=image.data[1];
 		var b=image.data[2];

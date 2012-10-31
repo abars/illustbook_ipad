@@ -30,7 +30,7 @@ function ToolBox(){
 
 		txt+=this._add_button("g_tool.set_pen","ペン",s,margin);
 		txt+=this._add_button("g_tool.set_eraser","消しゴム1",s,0);
-		txt+=this._add_button("g_tool.set_spoit","スポイト",s,0);
+		txt+=this._add_button("g_tool.set_spoit","スポイトL",s,0);
 		
 		if(g_chat.is_chat_mode()){
 			txt+=this._add_button("g_tool.set_hand","ハンド",s,0);
@@ -125,6 +125,7 @@ function Tool(){
 	
 	this._is_blur_pen=false;
 	this._is_blur_eraser=false;
+	this._is_canvas_spoit=false;
 	
 	this._set_pen_name=function(){
 		if(this._is_blur_pen){
@@ -137,19 +138,15 @@ function Tool(){
 		}else{
 			document.getElementById("g_tool.set_eraser").innerHTML="消しゴム1";
 		}
+		if(this._is_canvas_spoit){
+			document.getElementById("g_tool.set_spoit").innerHTML="スポイトC";
+		}else{
+			document.getElementById("g_tool.set_spoit").innerHTML="スポイトL";
+		}
 	}
 	
 	this._set_core=function(tool){
 		if(this._tool==tool){
-			/*
-			if(!(tool=="pen" || tool=="eraser")){
-				if(document.getElementById("edit_tool").style.display=="block"){
-					document.getElementById("edit_tool").style.display="none";
-				}else{
-					document.getElementById("edit_tool").style.display="block";
-				}
-			}
-			*/
 			if(!(g_chat.is_chat_mode())){
 				if(tool=="pen"){
 					this._is_blur_pen=!this._is_blur_pen;
@@ -157,6 +154,9 @@ function Tool(){
 				if(tool=="eraser"){
 					this._is_blur_eraser=!this._is_blur_eraser;
 				}
+			}
+			if(tool=="spoit"){
+				this._is_canvas_spoit=!this._is_canvas_spoit;
 			}
 			this._set_pen_name();
 			g_hand.resize(true);
@@ -186,6 +186,11 @@ function Tool(){
 		if(this._tool=="eraser"){
 			if(this._is_blur_eraser){
 				return "blur_eraser";
+			}
+		}
+		if(this._tool=="spoit"){
+			if(this._is_canvas_spoit){
+				return "canvas_spoit";
 			}
 		}
 		return this._tool;

@@ -24,6 +24,7 @@ var g_layer_move=new LayerMove();
 var g_bottom_tool=new BottomTool();
 var g_import=new Import();
 var g_layer=new Layer();
+var g_rendering=new Rendering();
 
 function ipad_init(canvas_width,canvas_height,canvas_url){
 	//キャンバス作成

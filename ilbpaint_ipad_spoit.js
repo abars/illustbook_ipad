@@ -10,26 +10,31 @@ function Spoit(){
 	}
 	
 	this.is_spoit_mode=function(){
-		return g_tool.get_tool()=="spoit";
+		var tool=g_tool.get_tool();
+		return tool=="spoit" || tool=="canvas_spoit";
 	}
 	
 	this.on_mouse_move=function(x,y){
 		if(this._hold){
-			this._spoit_core(x,y);
+			this._spoit_core(x,y,g_tool.get_tool()=="canvas_spoit");
 		}
 	}
 	
 	this.on_mouse_down=function(x,y){
 		this._hold=true;
-		this._spoit_core(x,y);
+		this._spoit_core(x,y,g_tool.get_tool()=="canvas_spoit");
 	}
 	
 	this.on_mouse_up=function(){
 		this._hold=false;
 	}
 	
-	this._spoit_core=function(x,y){
-		var color=g_draw_canvas.get_color_of_canvas(x,y);
+	this._spoit_core=function(x,y,is_canvas_spoit){
+		var color=g_draw_canvas.get_color_of_canvas(can_local[g_layer.get_layer_no()],x,y);
+		if(is_canvas_spoit){
+			g_rendering.rendering();
+			color=g_draw_canvas.get_color_of_canvas(g_rendering.get_canvas(),x,y);
+		}
 		g_color_circle.set_color(color);
 	}
 }
