@@ -25,7 +25,7 @@ function ToolBox(){
 		var txt="";
 		var s=g_button_width+20;
 		var margin=12;
-		txt+=this._add_button("g_undo_redo.undo","取り消し",s,4);
+		txt+=this._add_button("g_undo_redo.undo","取り消し",s,0);
 		txt+=this._add_button("g_undo_redo.redo","やり直し",s,0);
 
 		txt+=this._add_button("g_tool.set_pen","ペン",s,margin);
@@ -53,7 +53,7 @@ function ToolBox(){
 			txt+=this._add_button("g_chat.prepare_snapshot();g_chat.snapshot();","スナップ",s,margin);
 		}
 
-		document.getElementById("toolmenu").innerHTML=txt;//+"<br clear='both'>";
+		document.getElementById("toolmenu").innerHTML=txt;
 
 		//遅延登録が必須
 		if(!ipad_is_pc()){
