@@ -12,7 +12,7 @@ var TOOL_DISABLE_COLOR="#efefff";
 
 function ToolBox(){
 	this._add_button=function(cmd,info,s,margin){
-		var button_style="margin:2px;margin-left:4px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;color:"+TOOL_ENABLE_COLOR+";background-color:#ffffff;";
+		var button_style="border-radius:4px;margin:2px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;color:"+TOOL_ENABLE_COLOR+";background-color:#ffffff;";
 		var txt='<div id="'+cmd+'"';
 		if(ipad_is_pc()){
 			txt+=' onclick="javascript:'+cmd+'(false);"';
@@ -25,7 +25,7 @@ function ToolBox(){
 		var txt="";
 		var s=g_button_width+20;
 		var margin=12;
-		txt+=this._add_button("g_undo_redo.undo","取り消し",s,margin);
+		txt+=this._add_button("g_undo_redo.undo","取り消し",s,4);
 		txt+=this._add_button("g_undo_redo.redo","やり直し",s,0);
 
 		txt+=this._add_button("g_tool.set_pen","ペン",s,margin);
@@ -53,7 +53,7 @@ function ToolBox(){
 			txt+=this._add_button("g_chat.prepare_snapshot();g_chat.snapshot();","スナップ",s,margin);
 		}
 
-		document.getElementById("toolmenu").innerHTML=txt+"<br clear='both'>";
+		document.getElementById("toolmenu").innerHTML=txt;//+"<br clear='both'>";
 
 		//遅延登録が必須
 		if(!ipad_is_pc()){
