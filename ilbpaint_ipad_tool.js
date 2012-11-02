@@ -12,12 +12,12 @@ var TOOL_DISABLE_COLOR="#efefff";
 
 function ToolBox(){
 	this._add_button=function(cmd,info,s,margin){
-		var button_style="border-radius:4px;margin:2px;text-align:center;width:"+g_button_width+"px;height:"+g_button_height+"px;border:solid 1px #5f5fef;color:"+TOOL_ENABLE_COLOR+";background-color:#ffffff;";
+		var button_style="width:"+g_button_width+"px;height:"+g_button_height+"px;color:"+TOOL_ENABLE_COLOR+";";
 		var txt='<div id="'+cmd+'"';
 		if(ipad_is_pc()){
 			txt+=' onclick="javascript:'+cmd+'(false);"';
 		}
-		txt+=' style="'+button_style+'margin-top:'+margin+'px;">'+info+'</div>';
+		txt+=' class="tool_button" style="float:left;'+button_style+'margin-left:'+margin+'px;">'+info+'</div>';
 		return txt;
 	}
 

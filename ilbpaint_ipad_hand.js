@@ -38,7 +38,7 @@ function Hand(){
 	
 	this.init=function(){
 		this._buttom_size=0;//document.getElementById("bottom_tool").clientHeight;
-		this._left_size=document.getElementById("toolmenu").clientWidth;
+		this._left_size=0;//document.getElementById("toolmenu").clientWidth;
 		
 		this.resize(false);
 		

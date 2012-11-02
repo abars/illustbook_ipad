@@ -188,6 +188,8 @@ function Upload(){
 	
 	this.switch_upload_form=function(){
 		this._is_upload_mode=!this._is_upload_mode;
+		var tool_height=document.getElementById("bottom_tool").clientHeight;
+		document.getElementById("upload_form").style.bottom=tool_height;
 	}
 	
 	this.is_upload_mode=function(){
