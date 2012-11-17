@@ -128,7 +128,13 @@ function Buffer(){
 		}
 		for(var i=0;i<cmd_list.length;i++){
 			var cmd=cmd_list[i];
-			var cmd_object=eval(cmd)[0];
+			var cmd_object="";
+			try{
+				cmd_object=eval(cmd)[0];
+			}catch(e){
+				g_buffer._update_comment({"comment":"コマンド：「"+cmd+"」のパースに失敗"});
+				continue;
+			}
 			switch(cmd_object.cmd){
 			case CMD_TEXT:
 				if(comment_exec){
