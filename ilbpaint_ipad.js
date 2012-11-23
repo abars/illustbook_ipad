@@ -113,11 +113,12 @@ function ipad_event_init(){
 	can_div.addEventListener("gestureend", ipad_on_gesture_end,false);
 
 	can_event.addEventListener("touchstart", function(e){ e.preventDefault();},false);
-
+/*
 	//横スクロール禁止
 	document.getElementById("toolmenu").addEventListener("touchmove", function(e){ e.preventDefault();},false);
-	document.getElementById("bottom_tool").addEventListener("touchmove", function(e){ e.preventDefault();},false);
-	
+	document.getElementById("bottom_tool").addEventListener("touchmove", function(e){e.preventDefault();},false);
+*/
+
 	//リサイズ
 	window.onresize=function(e){ g_hand.resize(true); }
 }
@@ -254,7 +255,6 @@ function ipad_upload_callback(oj){
 function ipad_switch_upload_form(is_touch){
 	ipad_switch_form(is_touch,"upload_form");
 	g_upload.switch_upload_form();
-	g_tool_box.update();
 }
 
 function ipad_switch_palette_form(is_touch){

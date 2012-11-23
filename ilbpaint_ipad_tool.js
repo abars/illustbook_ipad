@@ -39,17 +39,13 @@ function ToolBox(){
 		}else{
 			txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
 		}
-		if(!(g_chat.is_view_mode())){
+		var submit_button_exist=window.innerWidth>480;
+		if(!(g_chat.is_view_mode()) && submit_button_exist){
 			txt+=this._add_button("ipad_switch_upload_form","投稿",s,margin);
 		}
-		/*
-		if(!(g_chat.is_chat_mode())){
-			txt+=this._add_button("g_draw_canvas.clear","クリア",s,margin);
-		}
-		*/
 		
 		//デバッグ
-		if(SNAPSHOT_ALERT){
+		if(SNAPSHOT_SNAP_BUTTON){
 			txt+=this._add_button("g_chat.prepare_snapshot();g_chat.snapshot();","スナップ",s,margin);
 		}
 
@@ -67,7 +63,7 @@ function ToolBox(){
 				document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);e.preventDefault();},false);
 				document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);e.preventDefault();},false);
 			}
-			if(!(g_chat.is_view_mode())){
+			if(!(g_chat.is_view_mode()) && submit_button_exist){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
 			}
 //			if(!(g_chat.is_chat_mode())){

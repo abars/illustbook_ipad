@@ -3,17 +3,15 @@
 //copyright 2010-2012 ABARS all rights reserved.
 //-------------------------------------------------
 
-var WATCH_DOG_COUNT=10;			//10回分の時間successが帰って来なかったらfailedと判断する
-var GET_COMMAND_LIMIT=250;		//コマンドを読み込んでくる単位
-var WORKER_INTERVAL=3000;			//3秒に一回通信
+var WATCH_DOG_COUNT=10;				//10回分の時間successが帰って来なかったらfailedと判断する
+var GET_COMMAND_LIMIT=250;			//コマンドを読み込んでくる単位
+var WORKER_INITIAL_INTERVAL=1000;	//1秒に一回イニシャルロード
+var WORKER_POST_INTERVAL=2000;		//3秒に一回データを送信
 var SNAPSHOT_PERCENT=75;			//使用率が上がった場合にスナップショットを取る
-var WAIT_FOR_UNDO_MSEC=2000;	//UNDO用に2秒待機
-var SNAPSHOT_ALERT=0;					//スナップショットの状況を表示するかどうか
+var WAIT_FOR_UNDO_MSEC=1000;		//UNDO用に1秒待機
 
-var CMD_DRAW=0;
-var CMD_TEXT=1;
-var CMD_HEART_BEAT=2;
-var CMD_NOP=4;
+var SNAPSHOT_ALERT=0;				//スナップショットの状況を表示するかどうか
+var SNAPSHOT_SNAP_BUTTON=0;			//スナップボタンを表示するかどうか
 
 //-------------------------------------------------
 //グローバルコールバック
@@ -26,7 +24,7 @@ var g_viewmode=false;			//見るだけのモードかどうか
 var g_initial_snapshot_created=false;	//最低一回はスナップショットを作成したか
 
 //チャットモードの場合は最初にinitが呼ばれる
-function chat_init(key,user_id,user_name,server_time,viewmode){
+function chat_init(key,user_id,user_name,server_time,viewmode,token,client_id){
 	//ユーザ情報
 	g_chat_user_id=user_id
 	g_chat_user_name=user_name
@@ -35,6 +33,9 @@ function chat_init(key,user_id,user_name,server_time,viewmode){
 	if(key=="local" || key==""){
 		return;
 	}
+
+	//Channel接続
+	chat_channel_init(token);
 	
 	//チャットモード
 	g_chat_key=key;
@@ -45,12 +46,16 @@ function chat_init(key,user_id,user_name,server_time,viewmode){
 	
 	//デバッグ用
 	g_chat_user_name=g_chat_user_name;
-	g_chat_user_id=g_chat_user_id+"_"+server_time
+	g_chat_user_id=client_id;//g_chat_user_id+"_"+server_time
 }
 
 //ワーカコールバック
-function chat_worker(){
-	g_chat._worker();
+function chat_initial_load_worker(){
+	g_chat._initial_load_worker();
+}
+
+function chat_post_worker(){
+	g_chat._post_worker();
 }
 
 //コマンドGETコールバック
@@ -61,9 +66,11 @@ function chat_get_callback(obj){
 	if(obj.status=="failed"){
 		g_chat._get_failed();
 	}
+	if(obj.status=="disconnect"){
+		chat_server_error("ChannelAPIが切断されました。");
+	}
 	if(obj.status=="not_found"){
-		alert("ルームが終了されました。イラブチャットポータルに戻ります。");
-		window.location.href="./chat";
+		chat_server_error("ルームが終了されました。");
 	}
 }
 
@@ -85,6 +92,12 @@ function chat_post_callback(obj){
 	if(obj.status=="failed"){
 		g_chat._send_failed();
 	}
+	if(obj.status=="disconnect"){
+		chat_server_error("ChannelAPIが切断されました。");
+	}
+	if(obj.status=="not_found"){
+		chat_server_error("ルームが終了されました。");
+	}
 }
 
 //スナップショットコールバック
@@ -102,8 +115,68 @@ function chat_get_snapshot_callback(obj){
 		g_chat._get_snapshot_success(obj);
 	}
 	if(obj.status=="failed"){
-		alert("初期読込に失敗しました。リロードして下さい。");
+		chat_server_error("スナップショットの読み込みに失敗しました。");
 	}
+}
+
+function chat_get_userlist_callback(obj){
+	if(obj.status=="success"){
+		//退室チェック
+		var user_list=new Array();
+		var name_map=new Object();
+		for(var client in obj.user_list){
+			user_list.push(client);
+			name_map[client]=obj.user_list[client];
+		}
+		g_user.update_user_list(user_list,name_map);
+	}
+	if(obj.status=="failed"){
+		chat_server_error("ユーザリストの読込に失敗しました。");
+	}
+}
+
+//サーバエラー
+function chat_server_error(message){
+	alert(""+message+"イラブチャットポータルに戻ります。");
+	window.location.href="./chat";
+}
+
+//-------------------------------------------------
+//Channel API
+//-------------------------------------------------
+
+function chat_channel_init(token){
+	var channel = new goog.appengine.Channel( token );
+	var socket = channel.open({
+		onopen      :   function(){
+			//  ソケットopen完了時(受信可となったタイミング)にコールされる処理
+			//g_buffer._update_comment({"comment":"サーバとのコネクションを確立しました。"});
+		}
+	,	onmessage   :   function(message) {
+			//  メッセージを受信したときにコールされる処理
+			//  message.data が受信した文字列
+			if(message.data=="update"){
+				//g_buffer._update_comment({"comment":"サーバから更新を受信しました。"});
+				g_chat._get();
+			}
+			if(message.data=="update_user"){
+				//g_buffer._update_comment({"comment":"サーバからユーザの変更を受信しました。"});
+				g_chat._get_user_list();
+			}
+		}
+	,	onerror     :   function(error) {
+			//  ソケットで何らかの異常が発生したときにコールされる処理
+			//  error.codeにエラーコード、error.descriptionに理由が入る
+			//  ※token の有効期限が切れた際にも呼ばれる
+			g_buffer._update_comment({"comment":"サーバとの接続でエラーが発生しました。リロードして下さい。"+error.description});
+		}
+	,	onclose     :   function(){
+			//  ソケットが何らかの理由でクローズされたときにコールされる処理
+			//  ※token の有効期限が切れた際にも呼ばれる
+			//  ※試した範囲では、自分で socket.close()を呼んでもコールされなかった
+			g_buffer._update_comment({"comment":"サーバとの接続がクローズされました。リロードして下さい。"});
+		}
+	});
 }
 
 //-------------------------------------------------
@@ -113,12 +186,12 @@ function chat_get_snapshot_callback(obj){
 function Chat(){
 	this._geted_count;		//どのネットワークコマンドまでGETしているかの位置
 	this._geting_count;		//今、GETしている数
-	this._geting_retry;			//GETしてからの経過時間
-	this._initial_load;			//初期読込かどうか
+	this._geting_retry;		//GETしてからの経過時間
+	this._initial_load;		//初期読込かどうか
 	
 	this._posted_count;		//どのローカルコマンドまでPOSTしているかの位置
-	this._posting_count;		//今、POSTしている数
-	this._posting_retry;		//POSTしてからの経過時間
+	this._posting_count;	//今、POSTしている数
+	this._posting_retry;	//POSTしてからの経過時間
 
 	this._local_packet_count;		//ローカルのユニークパケットID
 	
@@ -141,20 +214,32 @@ function Chat(){
 		//スナップショットを取得する
 		var url="chat?mode=snap_shot&key="+g_chat_key;
 		illustbook.request.get("./"+url,chat_get_snapshot_callback);
-		
+
 		//スナップショットの取得が完了したらワーカーのタイマー呼び出しを開始する
+	}
+
+	//ユーザリストの取得
+	this._get_user_list=function(){
+		var url="chat?mode=user_list&key="+g_chat_key;
+		illustbook.request.get("./"+url,chat_get_userlist_callback);
+	}
+
+	//初期ロードコールバック
+	this._initial_load_worker=function(){
+		//最新情報が存在するかどうか
+		if(this._initial_load){
+			//最新のコマンドを取得する
+			this._get();
+		}
 	}
 	
 	//ワーカー
-	this._worker=function(){
+	this._post_worker=function(){
 		//ローカルお絵かきモードの場合はPOSTしない
 		if(g_chat_key==null){
 			return;
 		}
-		
-		//最新のコマンドを取得する
-		this._get();
-		
+
 		//ビューモードの場合はGETするだけ
 		if(g_viewmode){
 			return;
@@ -162,9 +247,6 @@ function Chat(){
 		
 		//コマンドを送信する
 		this._send();
-		
-		//ハートビートを送信する
-		g_user.send_heart_beat();
 	}
 
 //-------------------------------------------------
@@ -192,7 +274,7 @@ function Chat(){
 		//コマンドリストを取得
 		this._geting_retry=0;
 		this._geting_count=GET_COMMAND_LIMIT
-		var url="chat?mode=get_command&offset="+this._geted_count+"&limit="+GET_COMMAND_LIMIT+"&key="+g_chat_key;
+		var url="chat?mode=get_command&offset="+this._geted_count+"&limit="+GET_COMMAND_LIMIT+"&key="+g_chat_key+"&client_id="+g_chat_user_id;
 		
 		//同じスレッドでGETする
 		illustbook.request.get("./"+url,chat_get_callback);
@@ -204,6 +286,9 @@ function Chat(){
 		if(count!=GET_COMMAND_LIMIT && this._initial_load){
 			g_buffer._update_comment({"comment":"初期読込が完了しました。"});
 			this._initial_load=false;
+			
+			//送信ワーカの起動
+			setInterval(chat_post_worker,WORKER_POST_INTERVAL);
 		}
 		
 		//コマンドを1つずつ処理
@@ -277,7 +362,7 @@ function Chat(){
 			post_data["command"+i]=cmd_list[i];
 		}
 		this._posting_count=cmd_list.length;
-		illustbook.request.post_async("./chat?mode=post_command&key="+g_chat_key,post_data,chat_post_callback);
+		illustbook.request.post_async("./chat?mode=post_command&key="+g_chat_key+"&client_id="+g_chat_user_id,post_data,chat_post_callback);
 		g_tool.update_undo_redo_status();
 	}
 	
@@ -440,21 +525,34 @@ function Chat(){
 			this._geted_count=obj.snap_range;
 
 			//スナップショットを反映
+			var image=new Array(LAYER_N);
 			for(var layer=0;layer<LAYER_N;layer++){
-				var image=new Image();
-				image.src="data:image/png;base64,"+obj["snap_shot_"+layer];
-				image.onload=(function(layer){
-					g_draw_primitive.clear(can_fixed[layer]);
-					can_fixed[layer].getContext("2d").drawImage(image,0,0);
+				image[layer]=new Image();
+				image[layer].src="data:image/png;base64,"+obj["snap_shot_"+layer];
+				image[layer].onload=(function(layer){
+					if(SNAPSHOT_ALERT){
+						g_buffer._update_comment({"comment":"レイヤー"+layer+"のスナップショットを更新 "+image[layer].width+"x"+image[layer].height});
+					}
+					try{
+						g_draw_primitive.clear(can_fixed[layer]);
+
+						//can_fixed[layer].getContext("2d").fillStyle = "rgb(255, 0, 0)";
+						//can_fixed[layer].getContext("2d").fillRect(0,0,100,100);
+
+						can_fixed[layer].getContext("2d").drawImage(image[layer],0,0);
+						g_buffer.undo_redo_exec_on_local_tool();	//新規追加
+					}catch(e){
+						alert("スナップショットの更新に失敗")
+					}
 				})(layer);
 			}
 		}
 
-		//イニシャルロード
-		chat_worker();
-		
-		//2回目以降のGETリクエスト
-		setInterval(chat_worker,WORKER_INTERVAL);
+		//ユーザリストを取得する
+		g_chat._get_user_list();
+
+		//イニシャルロードワーカー
+		setInterval(chat_initial_load_worker,WORKER_INITIAL_INTERVAL);
 	}
 	
 	this.reset_snapshot=function(){

@@ -50,8 +50,8 @@ function Upload(){
 		//var domain = location.hostname.replace(/^[^\.]*/, "");
 		document.cookie="name="+escape(author)+"; expires="+expires;// domain="+domain+"; expirse="+expires;
 
-		alert("画像をアップロードします。OKを押した後、しばらくお待ちください。");
-		
+		this.show_uploading();
+
 		title=(title)
 		author=(author)
 		comment=(comment)
@@ -120,10 +120,8 @@ function Upload(){
 		if(this._reply=="1"){
 			url_text="usr/"+this._bbs_key+"/"+this._thread_key+".html";
 		}
-		if(g_chat.is_chat_mode()){
-			alert("投稿が完了しました。");
-			//window.open(url_text);
-		}else{
+		this.show_upload_finish();
+		if(!(g_chat.is_chat_mode())){
 			window.location.href=url_text;
 		}
 	}
@@ -188,10 +186,35 @@ function Upload(){
 	
 	this.switch_upload_form=function(){
 		this._is_upload_mode=!this._is_upload_mode;
+
 		var tool_height=document.getElementById("bottom_tool").clientHeight;
 		document.getElementById("upload_form").style.bottom=tool_height;
+		document.getElementById("upload_finish").style.bottom=tool_height;
+		document.getElementById("uploading").style.bottom=tool_height;
+
+		g_tool_box.update();
+	}
+
+	this.show_uploading=function(){
+		document.getElementById("uploading").style.display="block"
+		document.getElementById("upload_form").style.display="none"
+		document.getElementById("upload_finish").style.display="none"
+	}
+
+	this.show_upload_finish=function(){
+		document.getElementById("uploading").style.display="none"
+		document.getElementById("upload_form").style.display="none"
+		document.getElementById("upload_finish").style.display="block"
 	}
 	
+	this.upload_cansel=function(){
+		this._is_upload_mode=false;
+		document.getElementById("uploading").style.display="none"
+		document.getElementById("upload_form").style.display="noone"
+		document.getElementById("upload_finish").style.display="none"
+		g_tool_box.update();
+	}
+
 	this.is_upload_mode=function(){
 		return this._is_upload_mode;
 	}

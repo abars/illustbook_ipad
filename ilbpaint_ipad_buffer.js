@@ -135,6 +135,9 @@ function Buffer(){
 				g_buffer._update_comment({"comment":"コマンド：「"+cmd+"」のパースに失敗"});
 				continue;
 			}
+			
+			//g_buffer._update_comment({"comment":cmd});
+
 			switch(cmd_object.cmd){
 			case CMD_TEXT:
 				if(comment_exec){
@@ -155,9 +158,6 @@ function Buffer(){
 				context[layer].drawImage(can_work,0,0);
 				context[layer].globalCompositeOperation="source-over";
 				context[layer].globalAlpha=1.0;
-				break;
-			case CMD_HEART_BEAT:
-				g_user.get_heart_beat(cmd_object);
 				break;
 			case CMD_NOP:
 				if(!this._reload_need){
