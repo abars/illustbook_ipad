@@ -39,7 +39,7 @@ function ToolBox(){
 		}else{
 			txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
 		}
-		var submit_button_exist=window.innerWidth>480;
+		var submit_button_exist=(window.innerWidth>480 || !g_chat.is_chat_mode());
 		if(!(g_chat.is_view_mode()) && submit_button_exist){
 			txt+=this._add_button("ipad_switch_upload_form","投稿",s,margin);
 		}

@@ -50,12 +50,12 @@ function BottomTool(){
 
 		document.getElementById("pen_tools").addEventListener("mousedown", ipad_bottom_tool_on_mouse_down,false);
 		document.getElementById("pen_tools").addEventListener("mousemove", ipad_bottom_tool_on_mouse_move,false);
-//		document.getElementById("bottom_tool").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
+		document.getElementById("bottom_tool").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
 		document.getElementById("toolmenu").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
 		
 		document.getElementById("pen_tools").addEventListener("touchstart", ipad_bottom_tool_on_mouse_down,false);
 		document.getElementById("pen_tools").addEventListener("touchmove", ipad_bottom_tool_on_mouse_move,false);
-//		document.getElementById("bottom_tool").addEventListener("touchend", ipad_bottom_tool_on_mouse_up,false);
+		document.getElementById("bottom_tool").addEventListener("touchend", ipad_bottom_tool_on_mouse_up,false);
 		document.getElementById("toolmenu").addEventListener("touchend", ipad_bottom_tool_on_mouse_up,false);
 	}
 
@@ -384,9 +384,9 @@ function ipad_bottom_tool_on_mouse_move(e){
 function ipad_bottom_tool_on_mouse_up(e){
 	if(e.touches){
 		g_bottom_tool.on_mouse_up();
-		e.preventDefault();
+		//e.preventDefault();	//iPadのスクロールを有効化するためにコメントアウト
 		return;
 	}
 	g_bottom_tool.on_mouse_up();
-	e.preventDefault();
+	//e.preventDefault();
 }
