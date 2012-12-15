@@ -528,23 +528,26 @@ function Chat(){
 			var image=new Array(LAYER_N);
 			for(var layer=0;layer<LAYER_N;layer++){
 				image[layer]=new Image();
-				image[layer].src="data:image/png;base64,"+obj["snap_shot_"+layer];
 				image[layer].onload=(function(layer){
+					return function(){
 					if(SNAPSHOT_ALERT){
 						g_buffer._update_comment({"comment":"レイヤー"+layer+"のスナップショットを更新 "+image[layer].width+"x"+image[layer].height});
 					}
+					if(image[layer].width==0 || image[layer].height==0){
+						g_buffer._update_comment({"comment":"レイヤー"+layer+"のスナップショットの読み込みエラー"});
+					}
 					try{
 						g_draw_primitive.clear(can_fixed[layer]);
-
 						//can_fixed[layer].getContext("2d").fillStyle = "rgb(255, 0, 0)";
 						//can_fixed[layer].getContext("2d").fillRect(0,0,100,100);
-
 						can_fixed[layer].getContext("2d").drawImage(image[layer],0,0);
 						g_buffer.undo_redo_exec_on_local_tool();	//新規追加
 					}catch(e){
 						alert("スナップショットの更新に失敗")
 					}
+					}
 				})(layer);
+				image[layer].src="data:image/png;base64,"+obj["snap_shot_"+layer];
 			}
 		}
 
