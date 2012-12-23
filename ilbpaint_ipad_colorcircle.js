@@ -296,9 +296,11 @@ function ColorCircle(){
 		var min_o=Math.floor(width*Math.atan2(Math.sqrt(3)*(gs-bs),2*rs-gs-bs)/(2*Math.PI));
 		if(min_o<0) min_o+=width;
 		min_o=min_o%width;
-		
-		this._cursor_x=min_o;
-		this._base_color=this._get_image_color(this._color_circle.data,this._cursor_x,0,this._color_circle_width);
+
+		var obj=this._get_color(min_o);
+		var color=0xff000000 | (obj.r<<16) | (obj.g<<8) | (obj.b);
+		this._base_color=color;
+		this._cursor_o=min_o/width*Math.PI*2;
 	}
 	
 	this._decide_box=function(color){
@@ -359,62 +361,56 @@ function ColorCircle(){
 //カラーボックス
 //-------------------------------------------------
 
-		this._boxg=function(context,tx,ty,tw,th,color){
-			var h = this.getH((color>>16)&0xff, (color>>8)&0xff, (color) & 0xff);
-			var pixels = context.createImageData(tw,th);
-			pixels.length = tw * th;
-			var adr = 0;
-			var step_h = 255 / (tw-1);
-			var step_v = 255 / (th-1);
-			for(var y=0;y<th;y++){
-				var hy=255 - y * step_v;
-				var hx=0;
-				for (var x = 0; x < tw; x++) {
-					this.writeRgbFromHsv(pixels.data ,adr, h, Math.floor(hx), hy);
-					adr += 4;
-					hx+=step_h;
-				}
-			}
-			return pixels;
+	this._boxg=function(context,tx,ty,tw,th,color){
+		var h = this.getH((color>>16)&0xff, (color>>8)&0xff, (color) & 0xff);
+		var pixels = context.createImageData(tw,th);
+		pixels.length = tw * th;
+		var adr = 0;
+		var step_h = 255 / (tw-1);
+		var step_v = 255 / (th-1);
+		for(var y=0;y<th;y++){
+			var hy=255 - y * step_v;
+			this.writeRgbFromHsvLine(pixels.data ,adr, h, hy, tw, step_h);
+			adr+=tw*4;
 		}
+		return pixels;
+	}
 		
-		this.getH=function(r,g,b){
-			var max = Math.max(r, g, b);
-			var min = Math.min(r, g, b);
-			if (max == 0) return 0;
-			var diff = max - min;
-			var h = 0;
+	this.getH=function(r,g,b){
+		var max = Math.max(r, g, b);
+		var min = Math.min(r, g, b);
+		if (max == 0) return 0;
+		var diff = max - min;
+		var h = 0;
 			
-			if (diff == 0)
-				return 0;
-			else if (max == r)
-				h = 60.0 * (g - b) / diff;
-			else if (max == g)
-				h = 60.0 * (b - r) / diff + 120.0;
-			else
-				h = 60.0 * (r - g) / diff + 240.0;
+		if (diff == 0)
+			return 0;
+		else if (max == r)
+			h = 60.0 * (g - b) / diff;
+		else if (max == g)
+			h = 60.0 * (b - r) / diff + 120.0;
+		else
+			h = 60.0 * (r - g) / diff + 240.0;
 			
-			if (h < 0) h += 360.0;
-			return h;
-		}
+		if (h < 0) h += 360.0;
+		return h;
+	}
 
-		this.writeRgbFromHsv=function(rgb,adr, h, s, v){
-			rgb[adr+3] = 255;
+	this.writeRgbFromHsvLine=function(rgb,adr, h, v, tw, step_h){
+		var hi = Math.floor(h / 60.0);
+		var f = (h / 60.0) - hi;
+		step_h=step_h/255.0;
+			
+		var m=v;
+		var n=v;
+		var k=v;
 
-			if (s == 0) {
-				rgb[adr+0] = v;
-				rgb[adr+1] = v;
-				rgb[adr+2] = v;
-				return;
-			}
-			
-			var hi = Math.floor(h / 60.0);
-			var f = (h / 60.0) - hi;
-			var m = Math.floor(v * (1 - s / 255.0));
-			var n = Math.floor(v * (1 - s * f / 255.0));
-			var k = Math.floor(v * (1 - s * (1 - f) / 255.0));
-			
-			switch(Math.floor(hi)) {
+		var step_m=step_h*v;
+		var step_n=step_h*f*v;
+		var step_k=step_h*(1-f)*v;
+
+		for (var x = 0; x < tw; x++) {
+			switch(hi) {
 				case 0: rgb[adr+0] = v; rgb[adr+1] = k; rgb[adr+2] = m; break;
 				case 1: rgb[adr+0] = n; rgb[adr+1] = v; rgb[adr+2] = m; break;
 				case 2: rgb[adr+0] = m; rgb[adr+1] = v; rgb[adr+2] = k; break;
@@ -423,7 +419,13 @@ function ColorCircle(){
 				case 5: rgb[adr+0] = v; rgb[adr+1] = m; rgb[adr+2] = n; break;
 				defalut: rgb[adr+0] = 0; rgb[adr+1] = 0; rgb[adr+2] = 0; break;
 			}
+			rgb[adr+3] = 255;
+			adr += 4;
+			m-=step_m;
+			n-=step_n;
+			k-=step_k;
 		}
+	}
 }
 
 //-------------------------------------------------

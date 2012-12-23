@@ -93,7 +93,11 @@ function Palette(){
 	this.set_color=function(color){
 		this._palette_color[this._selecting_no]=color;
 		this._color=color;
-		this.update();
+		//this.update();
+
+		//選択しているパレットだけを更新すればよい
+		document.getElementById("palette"+this._selecting_no).style["background-color"]=color;
+		g_bottom_tool.update_color();
 	}
 }
 
