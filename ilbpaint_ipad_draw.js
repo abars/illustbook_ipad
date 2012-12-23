@@ -15,8 +15,10 @@ function DrawCanvas(){
 	
 	this._draw_flag=false;
 	
+	//描画をキャンセルする
 	this.release_flag=function(){
 		this._draw_flag=false;
+		g_draw_primitive.clear(can_drawing[g_layer.get_layer_no()]);
 	}
 
 //-------------------------------------------------
@@ -120,10 +122,6 @@ function DrawCanvas(){
 	}
 	
 	this.on_mouse_up=function(){
-		if(!(this._draw_flag)){
-			return null;
-		}
-
 		if(this._draw_flag){
 			while(this._x_array.length<=2){
 				this._add_point(this._x_array[0],this._y_array[0]);

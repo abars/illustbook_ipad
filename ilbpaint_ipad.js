@@ -157,8 +157,10 @@ function ipad_on_mouse_move(e){
 }
 
 function ipad_on_mouse_down(e){
-	if(g_draw_canvas.is_drawing()){	//OnMouseUpが呼ばれなかった
-		ipad_on_mouse_up_core();
+	if(g_draw_canvas.is_drawing()){
+		//1本目の指を描いている時に二本目の指でタップした
+		g_draw_canvas.release_flag();
+		//ipad_on_mouse_up_core();
 	}
 	if(e.touches){
 		e.preventDefault();

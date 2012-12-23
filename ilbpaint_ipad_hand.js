@@ -82,8 +82,8 @@ function Hand(){
 		y=(y+y2)/2;
 
 		if(this._before_x){
-			this._hand_x+=x-this._before_x;
-			this._hand_y+=y-this._before_y;
+			this._hand_x+=(x-this._before_x)/this._zoom;
+			this._hand_y+=(y-this._before_y)/this._zoom;
 			can_div.style.top=""+Math.floor(this._hand_y)+"px";
 			can_div.style.left=""+Math.floor(this._hand_x)+"px";
 		}
