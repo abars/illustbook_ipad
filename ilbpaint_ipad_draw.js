@@ -99,9 +99,9 @@ function DrawCanvas(){
 		this._draw_flag=true;
 		
 		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
-			this._target_can=can_local[g_layer.get_layer_no()]
+			this._target_can=can_local[g_layer.get_layer_no()];
 			this._target_can.getContext("2d").globalCompositeOperation="destination-out"
-			this._target_can.getContext("2d").globalAlpha=1.0;
+			this._target_can.getContext("2d").globalAlpha=g_bottom_tool.get_alpha();//1.0;
 		}else{
 			this._target_can=can_drawing[g_layer.get_layer_no()]
 		}
@@ -122,23 +122,51 @@ function DrawCanvas(){
 	}
 	
 	this.on_mouse_up=function(){
+		//描画コマンドを確定
+		var command_list=null;
 		if(this._draw_flag){
 			while(this._x_array.length<=2){
 				this._add_point(this._x_array[0],this._y_array[0]);
 			}
 			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool());
+			command_list=this.get_command_list();
 		}
 
-		g_draw_primitive.clear(can_drawing[g_layer.get_layer_no()]);
+		//状態クリア
 		this._target_can.getContext("2d").globalCompositeOperation="source-over"
 		this._target_can.getContext("2d").globalAlpha=1.0
 
-		if(this._draw_flag){
-			this._draw_flag=false;
-			return this.get_command_list();
+		//ローカルモードの場合で単純描画の場合は描画バッファを流用することで高速化する
+		//以下をコメントアウトするとイラブチャットと同じように再描画するコードとなる
+		if(this._draw_flag && !g_chat.is_chat_mode()){
+			var alpha_eraser=g_tool.get_tool()=="eraser" && g_bottom_tool.get_alpha()!=1;
+			if(!alpha_eraser){	//α付き消しゴムはそのままだと微妙なので再描画をかける
+				if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
+					//消しゴムはローカルバッファに直接描いてしまうので、確定バッファに転送する
+					for(var layer=0;layer<LAYER_N;layer++){
+						g_draw_primitive.clear(can_fixed[layer]);
+						can_fixed[layer].getContext("2d").drawImage(can_local[layer],0,0);
+					}
+				}else{
+					//ペンは一時描画バッファに描くので、一時描画バッファから確定バッファに転送する
+					can_fixed[g_layer.get_layer_no()].getContext("2d").globalAlpha=g_bottom_tool.get_alpha();
+					can_fixed[g_layer.get_layer_no()].getContext("2d").drawImage(this._target_can,0,0);
+					for(var layer=0;layer<LAYER_N;layer++){
+						g_draw_primitive.clear(can_local[layer]);
+						can_local[layer].getContext("2d").drawImage(can_fixed[layer],0,0);
+					}
+				}
+
+				command_list=null;	//ローカルバッファに書き出してしまうのでコマンドリストは不要
+			}
 		}
-		
-		return null;
+
+		//一時描画バッファのクリア
+		g_draw_primitive.clear(can_drawing[g_layer.get_layer_no()]);
+
+		//ネットワークモードの場合は描画コマンドから再描画
+		this._draw_flag=false;
+		return command_list;
 	}
 
 //-------------------------------------------------

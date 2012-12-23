@@ -78,13 +78,6 @@ function ColorCircle(){
 		var canvas=document.getElementById("color_circle");
 		var context=canvas.getContext("2d");
 
-/*
-		for(var x=0;x<this._color_circle_width;x++){
-			var obj=this._get_color(x);
-			context.fillStyle="rgb("+obj.r+","+obj.g+","+obj.b+")";
-			context.fillRect(x,0,1,this._color_circle_height);
-		}
-*/
 		var num_o=this._color_circle_width*8;
 		for(var i=0;i<num_o;i++){
 			var o=Math.PI*2*i/num_o;
@@ -104,8 +97,6 @@ function ColorCircle(){
 
 		this._color_circle=context.getImageData(0,0,this._color_circle_width,this._color_circle_height);
 		this._color_box=this._boxg(context,0,0,this._color_box_width,this._color_box_height,0x000000);
-		
-		//this._draw(context);
 	}
 	
 	this._draw=function(context){
@@ -135,8 +126,6 @@ function ColorCircle(){
 		context.restore();
 
 		this._draw_box(context);
-		
-		//this._draw_preview(context);
 	}
 
 	this._draw_box=function(context){
@@ -370,7 +359,7 @@ function ColorCircle(){
 //カラーボックス
 //-------------------------------------------------
 
-	this._boxg=function(context,tx,ty,tw,th,color){
+		this._boxg=function(context,tx,ty,tw,th,color){
 			var h = this.getH((color>>16)&0xff, (color>>8)&0xff, (color) & 0xff);
 			var pixels = context.createImageData(tw,th);
 			pixels.length = tw * th;
