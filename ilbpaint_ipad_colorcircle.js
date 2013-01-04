@@ -239,7 +239,7 @@ function ColorCircle(){
 	}
 	
 	this._get_image_color=function(data,x,y,w){
-		var adr=y*w+x;
+		var adr=Math.floor(y)*w+Math.floor(x);
 		adr*=4;
 		var r=data[adr+0];
 		var g=data[adr+1];
