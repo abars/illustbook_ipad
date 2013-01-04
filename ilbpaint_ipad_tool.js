@@ -78,15 +78,15 @@ function ToolBox(){
 		if(g_hand.is_hand_mode()){
 			color="#c7e5f9"
 		}
-		alert(document.getElementById("g_hand.hand_mode").style["background-color"]);
-		document.getElementById("g_hand.hand_mode").style["background-color"]=color;
+		alert(document.getElementById("g_hand.hand_mode").style["backgroundColor"]);
+		document.getElementById("g_hand.hand_mode").style["backgroundColor"]=color;
 		*/
 		
 		var color="#ffffff";
 		if(g_upload.is_upload_mode()){
 			color="#c7e5f9";
 		}
-		document.getElementById("ipad_switch_upload_form").style["background-color"]=color;
+		document.getElementById("ipad_switch_upload_form").style["backgroundColor"]=color;
 	}
 }
 
@@ -159,15 +159,18 @@ function Tool(){
 			g_bottom_tool.on_tool_change(this.get_tool());
 			return;
 		}
-		
+
+		//background-colorだとFirefoxで動作しない
+		//backgroundColorにすること
+
 		var color="#ffffff";
-		document.getElementById("g_tool.set_pen").style["background-color"]=color;
-		document.getElementById("g_tool.set_eraser").style["background-color"]=color;
-		document.getElementById("g_tool.set_hand").style["background-color"]=color;
-		document.getElementById("g_tool.set_spoit").style["background-color"]=color;
+		document.getElementById("g_tool.set_pen").style["backgroundColor"]=color;
+		document.getElementById("g_tool.set_eraser").style["backgroundColor"]=color;
+		document.getElementById("g_tool.set_hand").style["backgroundColor"]=color;
+		document.getElementById("g_tool.set_spoit").style["backgroundColor"]=color;
 
 		color="#c7e5f9"
-		document.getElementById("g_tool.set_"+tool).style["background-color"]=color;
+		document.getElementById("g_tool.set_"+tool).style["backgroundColor"]=color;
 		
 		this._tool=tool;
 		g_bottom_tool.on_tool_change(this.get_tool());

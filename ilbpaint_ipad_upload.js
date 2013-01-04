@@ -30,8 +30,6 @@ function Upload(){
 		this._thread_key=thread_key;
 		this._reply=reply;
 	
-		this._create_thumbnail();
-	
 		var title=document.getElementById("title").value;
 		var author=document.getElementById("name").value;
 		var comment=document.getElementById("comment").value;
@@ -43,15 +41,15 @@ function Upload(){
 		if(author==""){
 			alert("投稿者名は必須です。");
 			return;
-			//author="unknown";
 		}
 
 		var expires = "Thu, 1-Jan-2030 00:00:00 GMT";
-		//var domain = location.hostname.replace(/^[^\.]*/, "");
-		document.cookie="name="+escape(author)+"; expires="+expires;// domain="+domain+"; expirse="+expires;
+		document.cookie="name="+escape(author)+"; expires="+expires;
 
 		this.show_uploading();
 
+		this._create_thumbnail();
+	
 		title=(title)
 		author=(author)
 		comment=(comment)
@@ -90,8 +88,6 @@ function Upload(){
 		this._append("image",image);
 
 		this._data += "--"+this._boundary+"--\r\n";
-		
-		//alert(this._data);
 		
 		var cmd="upl_all";
 		if(reply=="1"){
