@@ -247,7 +247,7 @@ function ipad_upload_callback(oj){
 		g_upload.go_bbs();
 		return;
 	}
-	alert("アップロードに失敗しました。");
+	alert("アップロードに失敗しました。"+oj.responseText);
 }
 
 //-------------------------------------------------
