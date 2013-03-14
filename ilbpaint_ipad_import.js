@@ -26,6 +26,7 @@ function ipad_import(){
 		}
 		reader.readAsDataURL(f);
 		g_imported=true;
+		g_upload.set_illust_exist();
 	}
 }
 
@@ -37,6 +38,7 @@ function ipad_import_from_url(url){
 		var context=can_fixed[0].getContext("2d");
 		context.drawImage(image, 0, 0);
 		g_buffer.undo_redo_exec_on_local_tool();
+		g_upload.set_illust_exist();
 	}
 	image.src = "./img/"+url+".jpg";
 }

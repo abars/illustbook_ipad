@@ -246,7 +246,7 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 			this._focus=FOCUS_ALPHA;
 		}
 
-if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
+		if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
 			if(this._sub_tool==SUB_TOOL_LAYER){
 				this._sub_tool=SUB_TOOL_NONE;
 			}else{

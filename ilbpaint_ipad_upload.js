@@ -21,7 +21,7 @@ function Upload(){
 		return data.split(",")[1];
 	}
 	
-	this.upload=function(bbs_key,thread_key,reply){
+	this.upload=function(bbs_key,thread_key,reply,text_only){
 		if(bbs_key==""){
 			bbs_key=document.getElementById("bbs_list").value;
 		}
@@ -55,6 +55,13 @@ function Upload(){
 		comment=(comment)
 		delete_key=(delete_key)
 	
+		var MODE_ILLUST=1;
+		var MODE_TEXT=3;
+		var illust_mode=MODE_ILLUST;
+		if(text_only){
+			illust_mode=MODE_TEXT;
+		}
+
 		this._data="";
 		this._append("bbs_key",bbs_key);
 		if(reply=="1"){
@@ -66,7 +73,7 @@ function Upload(){
 		this._append("author",author);
 		this._append("comment",comment);
 		this._append("delete_key",delete_key);
-		this._append("illust_mode","1");
+		this._append("illust_mode",""+illust_mode);
 		this._append("mode","illust_all");
 		this._append("base64","1");
 
@@ -179,9 +186,11 @@ function Upload(){
 	}
 	
 	this._is_upload_mode=false;
-	
+	this._is_illust_exist=false;
+
 	this.switch_upload_form=function(){
 		this._is_upload_mode=!this._is_upload_mode;
+		this._change_upload_button();
 
 		var tool_height=document.getElementById("bottom_tool").clientHeight;
 		document.getElementById("upload_form").style.bottom=tool_height;
@@ -213,5 +222,20 @@ function Upload(){
 
 	this.is_upload_mode=function(){
 		return this._is_upload_mode;
+	}
+
+	this.set_illust_exist=function(){
+		this._is_illust_exist=true;
+		this._change_upload_button();
+	}
+
+	this._change_upload_button=function(){
+		document.getElementById("submit_illust").style.display="none";
+		document.getElementById("submit_text").style.display="none";
+		if(this._is_illust_exist || g_chat.is_chat_mode()){
+			document.getElementById("submit_illust").style.display="block";
+		}else{
+			document.getElementById("submit_text").style.display="block";
+		}
 	}
 }

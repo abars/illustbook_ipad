@@ -205,6 +205,7 @@ function ipad_on_mouse_down_core(x,y){
 	}
 	if(!(g_chat.is_view_mode())){
 		g_draw_canvas.on_mouse_down(x,y);
+		g_upload.set_illust_exist();
 	}
 }
 
