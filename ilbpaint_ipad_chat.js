@@ -62,16 +62,21 @@ function chat_post_worker(){
 function chat_get_callback(obj){
 	if(obj.status=="success"){
 		g_chat._get_success(obj.command_list,obj.count);
+		return;
 	}
 	if(obj.status=="failed"){
 		g_chat._get_failed();
+		return;
 	}
 	if(obj.status=="disconnect"){
 		chat_server_error("ChannelAPIが切断されました。");
+		return;
 	}
 	if(obj.status=="not_found"){
 		chat_server_error("ルームが終了されました。");
+		return;
 	}
+	chat_server_error("不明なエラー["+obj.status+"]が発生しました。")
 }
 
 //コマンドPOSTコールバック
@@ -273,7 +278,7 @@ function Chat(){
 		
 		//コマンドリストを取得
 		this._geting_retry=0;
-		this._geting_count=GET_COMMAND_LIMIT
+		this._geting_count=GET_COMMAND_LIMIT;
 		var url="chat?mode=get_command&offset="+this._geted_count+"&limit="+GET_COMMAND_LIMIT+"&key="+g_chat_key+"&client_id="+g_chat_user_id;
 		
 		//同じスレッドでGETする
@@ -282,6 +287,12 @@ function Chat(){
 	
 	//コマンドの取得に成功した
 	this._get_success=function(cmd_list,count){
+		//アサーション
+		if(count === undefined){
+			chat_server_error("サーバから返却されたcount値が不正です。");
+			return;
+		}
+
 		//初期読み込みの完了通知
 		if(count!=GET_COMMAND_LIMIT && this._initial_load){
 			g_buffer._update_comment({"comment":"初期読込が完了しました。"});
@@ -523,6 +534,12 @@ function Chat(){
 		//スナップショット取得成功
 		if(obj.snap_range){
 			this._geted_count=obj.snap_range;
+
+			//アサーション
+			if(obj.snap_range === undefined){
+				chat_server_error("サーバから返却されたスナップショットのrange値が不正です。");
+				return;
+			}
 
 			//スナップショットを反映
 			var image=new Array(LAYER_N);
