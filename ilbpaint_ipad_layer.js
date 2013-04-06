@@ -211,7 +211,7 @@ function LayerMove(){
 	this._sy;
 
 	this.is_move_mode=function(){
-		return g_tool.get_tool()=="hand" && !(g_chat.is_chat_mode());
+		return g_tool.get_tool()=="hand" && !(g_chat.is_chat_mode() || ipad_is_pc());
 	}
 	
 	this.on_mouse_down=function(x,y,layer){

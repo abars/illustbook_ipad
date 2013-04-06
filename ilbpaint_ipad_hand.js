@@ -133,6 +133,6 @@ function Hand(){
 	}
 	
 	this.is_hand_mode=function(){
-		return g_tool.get_tool()=="hand" && g_chat.is_chat_mode();
+		return g_tool.get_tool()=="hand" && (g_chat.is_chat_mode() || ipad_is_pc());
 	}
 }

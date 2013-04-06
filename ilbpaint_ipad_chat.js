@@ -293,15 +293,6 @@ function Chat(){
 			return;
 		}
 
-		//初期読み込みの完了通知
-		if(count!=GET_COMMAND_LIMIT && this._initial_load){
-			g_buffer._update_comment({"comment":"初期読込が完了しました。"});
-			this._initial_load=false;
-			
-			//送信ワーカの起動
-			setInterval(chat_post_worker,WORKER_POST_INTERVAL);
-		}
-		
 		//コマンドを1つずつ処理
 		for(var i=0;i<count;i++){
 			var cmd=cmd_list[i];
@@ -311,6 +302,15 @@ function Chat(){
 		//取得した位置を更新
 		this._geted_count+=count;
 		this._geting_count=0;
+
+		//初期読み込みの完了通知
+		if(count!=GET_COMMAND_LIMIT && this._initial_load){
+			g_buffer._update_comment({"comment":"初期読込が完了しました。"});
+			this._initial_load=false;
+			
+			//送信ワーカの起動
+			setInterval(chat_post_worker,WORKER_POST_INTERVAL);
+		}
 	}
 	
 	//コマンドの取得に失敗した

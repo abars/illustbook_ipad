@@ -274,7 +274,7 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 			document.getElementById("palette_tool").style.display="none";
 		}
 		var tool_height=document.getElementById("bottom_tool").clientHeight;
-		document.getElementById("palette_tool").style.bottom=tool_height;
+		document.getElementById("palette_tool").style.bottom=tool_height+"px";
 		if(this._sub_tool==SUB_TOOL_COLOR){
 			document.getElementById("palette_tool_color").style.display="block";
 		}else{

@@ -37,7 +37,11 @@ function ToolBox(){
 			txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+",s,margin);
 			txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-",s,0);
 		}else{
-			txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
+			if(ipad_is_pc()){
+				txt+=this._add_button("g_tool.set_hand","ハンド",s,0);
+			}else{
+				txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
+			}
 		}
 		var submit_button_exist=(window.innerWidth>480 || !g_chat.is_chat_mode());
 		if(!(g_chat.is_view_mode()) && submit_button_exist){

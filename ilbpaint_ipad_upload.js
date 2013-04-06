@@ -193,9 +193,9 @@ function Upload(){
 		this._change_upload_button();
 
 		var tool_height=document.getElementById("bottom_tool").clientHeight;
-		document.getElementById("upload_form").style.bottom=tool_height;
-		document.getElementById("upload_finish").style.bottom=tool_height;
-		document.getElementById("uploading").style.bottom=tool_height;
+		document.getElementById("upload_form").style.bottom=tool_height+"px";
+		document.getElementById("upload_finish").style.bottom=tool_height+"px";
+		document.getElementById("uploading").style.bottom=tool_height+"px";
 
 		g_tool_box.update();
 	}
