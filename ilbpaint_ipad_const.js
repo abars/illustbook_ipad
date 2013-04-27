@@ -16,3 +16,12 @@ var LAYER_MODE_NAME=new Array("非表示","通常","加算");
 var CMD_DRAW=0;
 var CMD_TEXT=1;
 var CMD_NOP=4;
+
+var PEN_MODE_NORMAL=0;
+var PEN_MODE_BLUR=1;
+
+var ERASER_MODE_NORMAL=0;
+var ERASER_MODE_BLUR=1;
+
+var PEN_MODE_N=2;
+var ERASER_MODE_N=2;

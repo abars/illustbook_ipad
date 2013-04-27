@@ -70,22 +70,10 @@ function ToolBox(){
 			if(!(g_chat.is_view_mode()) && submit_button_exist){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
 			}
-//			if(!(g_chat.is_chat_mode())){
-//				document.getElementById("g_draw_canvas.clear").addEventListener("touchstart", function(e){g_draw_canvas.clear(true);e.preventDefault();},false);
-//			}
 		}
 	}
 
 	this.update=function(){
-		/*
-		var color="#ffffff";
-		if(g_hand.is_hand_mode()){
-			color="#c7e5f9"
-		}
-		alert(document.getElementById("g_hand.hand_mode").style["backgroundColor"]);
-		document.getElementById("g_hand.hand_mode").style["backgroundColor"]=color;
-		*/
-		
 		var color="#ffffff";
 		if(g_upload.is_upload_mode()){
 			color="#c7e5f9";
@@ -122,20 +110,23 @@ function Tool(){
 	this.set_spoit=function(){
 		this._set_core("spoit");
 	}
+
+	this._pen_mode=PEN_MODE_NORMAL;
+	this._eraser_mode=ERASER_MODE_NORMAL;
 	
-	this._is_blur_pen=false;
-	this._is_blur_eraser=false;
 	this._is_canvas_spoit=false;
 	
 	this._set_pen_name=function(){
-		if(this._is_blur_pen){
+		if(this._pen_mode==PEN_MODE_BLUR){
 			document.getElementById("g_tool.set_pen").innerHTML="ブラシ";
-		}else{
+		}
+		if(this._pen_mode==PEN_MODE_NORMAL){
 			document.getElementById("g_tool.set_pen").innerHTML="ペン";
 		}
-		if(this._is_blur_eraser){
+		if(this._eraser_mode==ERASER_MODE_BLUR){
 			document.getElementById("g_tool.set_eraser").innerHTML="消しゴム2";
-		}else{
+		}
+		if(this._eraser_mode==ERASER_MODE_NORMAL){
 			document.getElementById("g_tool.set_eraser").innerHTML="消しゴム1";
 		}
 		if(this._is_canvas_spoit){
@@ -149,10 +140,16 @@ function Tool(){
 		if(this._tool==tool){
 			if(!(g_chat.is_chat_mode())){
 				if(tool=="pen"){
-					this._is_blur_pen=!this._is_blur_pen;
+					this._pen_mode++;
+					if(this._pen_mode>=PEN_MODE_N){
+						this._pen_mode=0;
+					}
 				}
 				if(tool=="eraser"){
-					this._is_blur_eraser=!this._is_blur_eraser;
+					this._eraser_mode++;
+					if(this._eraser_mode>=ERASER_MODE_N){
+						this._eraser_mode=0;
+					}
 				}
 			}
 			if(tool=="spoit"){
@@ -182,12 +179,12 @@ function Tool(){
 	
 	this.get_tool=function(){
 		if(this._tool=="pen"){
-			if(this._is_blur_pen){
+			if(this._pen_mode==PEN_MODE_BLUR){
 				return "blur";
 			}
 		}
 		if(this._tool=="eraser"){
-			if(this._is_blur_eraser){
+			if(this._eraser_mode==ERASER_MODE_BLUR){
 				return "blur_eraser";
 			}
 		}
