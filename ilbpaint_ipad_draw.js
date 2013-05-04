@@ -122,6 +122,11 @@ function DrawCanvas(){
 	}
 	
 	this.on_mouse_up=function(){
+		//描画モードでない場合
+		if(!this._draw_flag){
+			return;
+		}
+
 		//描画コマンドを確定
 		var command_list=null;
 		if(this._draw_flag){
