@@ -46,8 +46,17 @@ function Storage(){
 		var width=Number(window.localStorage[id+"_width"]);
 		var height=Number(window.localStorage[id+"_height"]);
 		
+		//現在のキャンバスをクリア
+		g_undo_redo.push_all();
+		for(var layer=0;layer<LAYER_N;layer++){
+			var context=can_fixed[layer].getContext("2d");
+			context.clearRect(0,0,can_fixed[layer].width, can_fixed[layer].height);
+		}
+
+		//画像を読込
 		var layer_image_list=new Array();
 		var layer_mode_list=new Array();
+
 		for(var layer=0;layer<layer_n;layer++){
 			var layer_mode=Number(window.localStorage[id+"_layer"+layer+"_mode"]);
 			var layer_image=window.localStorage[id+"_layer"+layer+"_image"];
@@ -55,19 +64,20 @@ function Storage(){
 			layer_mode_list[layer]=layer_mode;
 		}
 
+		//レイヤー数を拡張
 		var add_layer_n=layer_n-LAYER_N;
 		for(var i=0;i<add_layer_n;i++){
 			g_layer.add_layer();
 		}
-		LAYER_N=layer_n;
 
+		//キャンバスサイズを変更
 		var size_object=new Object();
 		size_object.width=width;
 		size_object.height=height;
 
-		g_undo_redo.push_all();
 		g_layer.change_canvas_size(size_object);
 
+		//画像のロード
 		var image_list=new Array();
 		for(var layer=0;layer<layer_n;layer++){
 			g_layer.set_layer_mode(layer,layer_mode_list[layer]);
@@ -77,9 +87,9 @@ function Storage(){
 			function load_image_layer(layer,image) {
 				return function(){
 					var context=can_fixed[layer].getContext("2d");
-					context.clearRect(0,0,can_fixed[layer].width, can_fixed[layer].height);
 					context.drawImage(image, 0, 0);
 					g_buffer.undo_redo_exec_on_local_tool();
+					g_layer.update_thumbnail();
 				}
 			}
 
@@ -87,8 +97,8 @@ function Storage(){
 			image_list[layer].src=layer_image_list[layer];
 		}
 
+		//完了通知
 		g_upload.set_illust_exist();
-
 		alert("読込が完了しました。取り消しで読込前の状態に戻ることもできます。");
 		ipad_switch_storage_form();
 	}
