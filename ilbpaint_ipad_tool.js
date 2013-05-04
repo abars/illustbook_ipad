@@ -45,7 +45,8 @@ function ToolBox(){
 		}
 		var submit_button_exist=(window.innerWidth>480 || !g_chat.is_chat_mode());
 		if(!(g_chat.is_view_mode()) && submit_button_exist){
-			txt+=this._add_button("ipad_switch_upload_form","投稿",s,margin);
+			txt+=this._add_button("ipad_switch_storage_form","記録",s,margin);
+			txt+=this._add_button("ipad_switch_upload_form","投稿",s,0);
 		}
 		
 		//デバッグ
@@ -69,16 +70,21 @@ function ToolBox(){
 			}
 			if(!(g_chat.is_view_mode()) && submit_button_exist){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
+				document.getElementById("ipad_switch_storage_form").addEventListener("touchstart", function(e){ipad_switch_storage_form(true);e.preventDefault();},false);
 			}
 		}
 	}
 
-	this.update=function(){
-		var color="#ffffff";
-		if(g_upload.is_upload_mode()){
-			color="#c7e5f9";
+	this._get_button_color=function(enable){
+		if(enable){
+			return "#c7e5f9";
 		}
-		document.getElementById("ipad_switch_upload_form").style["backgroundColor"]=color;
+		return "#ffffff";
+	}
+
+	this.update=function(){
+		document.getElementById("ipad_switch_upload_form").style["backgroundColor"]=this._get_button_color(g_upload.is_upload_mode());
+		document.getElementById("ipad_switch_storage_form").style["backgroundColor"]=this._get_button_color(g_storage.is_storage_mode());
 	}
 }
 

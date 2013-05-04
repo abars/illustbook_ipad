@@ -25,6 +25,7 @@ var g_bottom_tool=new BottomTool();
 var g_import=new Import();
 var g_layer=new Layer();
 var g_rendering=new Rendering();
+var g_storage=new Storage();
 
 function ipad_init(canvas_width,canvas_height,canvas_url){
 	//キャンバス作成
@@ -258,6 +259,11 @@ function ipad_upload_callback(oj){
 function ipad_switch_upload_form(is_touch){
 	ipad_switch_form(is_touch,"upload_form");
 	g_upload.switch_upload_form();
+}
+
+function ipad_switch_storage_form(is_touch){
+	ipad_switch_form(is_touch,"storage_form");
+	g_storage.switch_storage_form();
 }
 
 function ipad_switch_palette_form(is_touch){

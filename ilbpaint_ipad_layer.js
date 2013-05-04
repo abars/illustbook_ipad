@@ -197,6 +197,10 @@ function Layer(){
 		}
 		this.show_layer_tool();
 	}
+
+	this.set_layer_mode=function(layer_no,mode){
+		this._layer_mode[layer_no]=mode;
+	}
 }
 
 function g_layer_click(e){
