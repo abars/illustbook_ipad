@@ -55,10 +55,10 @@ function User(){
 		var txt="";
 		for(var i=0;i<this._user_list.length;i++){
 			var user=this._user_list[i];
-			//var name=user.name;
+			var name=user.name;
 			var id=user.id.split("_")[0];
-			txt+="<a href='./mypage?user_id="+id+"' target='_BLANK'>";
-			txt+="<img src='./show_icon?key="+id+"' width=30px height=30px>";
+			txt+="<a href='./mypage?user_id="+id+"' target='_BLANK' title='"+name+"'>";
+			txt+="<img src='./show_icon?key="+id+"' width='30px' height='30px' alt='"+name+"'>";
 			txt+="</a>";
 		}
 		txt+="<BR><small>"+this._user_list.length+"人参加</small>";
