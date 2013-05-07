@@ -21,6 +21,10 @@ function ipad_import(){
 				resize.width=image.width;
 				resize.height=image.height;
 
+				if(resize.width*resize.height>=1024*1024){
+					alert("1024*1024[px]を超えるサイズの画像はiOS6では読み込めません。リサイズして下さい。");
+				}
+
 				var max_width=700;
 				if(resize.width>=max_width){
 					resize.height=Math.floor(resize.height*max_width/resize.width);
