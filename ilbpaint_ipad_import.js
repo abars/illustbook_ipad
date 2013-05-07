@@ -16,10 +16,21 @@ function ipad_import(){
 		reader.onload = function(evt) {
 			image.onload = function() {
 				g_undo_redo.push_all();
-				g_layer.change_canvas_size(image);
-				
+
+				var resize=new Object();
+				resize.width=image.width;
+				resize.height=image.height;
+
+				var max_width=700;
+				if(resize.width>=max_width){
+					resize.height=Math.floor(resize.height*max_width/resize.width);
+					resize.width=max_width;
+				}
+
+				g_layer.change_canvas_size(resize);
+
 				var context=can_fixed[0].getContext("2d");
-				context.drawImage(image, 0, 0);
+				context.drawImage(image, 0, 0, resize.width , resize.height);
 				g_buffer.undo_redo_exec_on_local_tool();
 			}
 			image.src = evt.target.result;
