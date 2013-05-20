@@ -42,11 +42,11 @@ function ToolBox(){
 			}else{
 				txt+=this._add_button("g_tool.set_hand","ムーブ",s,0);
 			}
+			txt+=this._add_button("ipad_switch_storage_form","記録",s,margin);
 		}
 		var submit_button_exist=(window.innerWidth>480 || !g_chat.is_chat_mode());
 		if(!(g_chat.is_view_mode()) && submit_button_exist){
-			txt+=this._add_button("ipad_switch_storage_form","記録",s,margin);
-			txt+=this._add_button("ipad_switch_upload_form","投稿",s,0);
+			txt+=this._add_button("ipad_switch_upload_form","投稿",s,g_chat.is_chat_mode()*margin);
 		}
 		
 		//デバッグ
@@ -67,10 +67,11 @@ function ToolBox(){
 			if(g_chat.is_chat_mode()){
 				document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);e.preventDefault();},false);
 				document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);e.preventDefault();},false);
+			}else{
+				document.getElementById("ipad_switch_storage_form").addEventListener("touchstart", function(e){ipad_switch_storage_form(true);e.preventDefault();},false);
 			}
 			if(!(g_chat.is_view_mode()) && submit_button_exist){
 				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
-				document.getElementById("ipad_switch_storage_form").addEventListener("touchstart", function(e){ipad_switch_storage_form(true);e.preventDefault();},false);
 			}
 		}
 	}
