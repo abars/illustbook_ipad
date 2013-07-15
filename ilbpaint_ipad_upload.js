@@ -21,7 +21,7 @@ function Upload(){
 		return data.split(",")[1];
 	}
 	
-	this.upload=function(bbs_key,thread_key,reply,text_only){
+	this.upload=function(bbs_key,thread_key,entry_key,reply,text_only,overwrite){
 		if(bbs_key==""){
 			bbs_key=document.getElementById("bbs_list").value;
 		}
@@ -30,7 +30,10 @@ function Upload(){
 		this._thread_key=thread_key;
 		this._reply=reply;
 	
-		var title=document.getElementById("title").value;
+		var title="";
+		if(reply=="0"){
+			title=document.getElementById("title").value;
+		}
 		var author=document.getElementById("name").value;
 		var comment=document.getElementById("comment").value;
 		var delete_key=document.getElementById("delete_key").value;
@@ -64,10 +67,19 @@ function Upload(){
 
 		this._data="";
 		this._append("bbs_key",bbs_key);
+		
 		if(reply=="1"){
 			this._append("thread_key",thread_key);
+			if(overwrite){
+				this._append("entry_key",entry_key);
+			}
 			this._append("reply","1");
+		}else{
+			if(overwrite){
+				this._append("thread_key",thread_key);
+			}
 		}
+
 		this._append("thread_title",title);
 		this._append("homepage_addr","");
 		this._append("author",author);
@@ -230,12 +242,14 @@ function Upload(){
 	}
 
 	this._change_upload_button=function(){
-		document.getElementById("submit_illust").style.display="none";
-		document.getElementById("submit_text").style.display="none";
-		if(this._is_illust_exist || g_chat.is_chat_mode()){
-			document.getElementById("submit_illust").style.display="block";
-		}else{
-			document.getElementById("submit_text").style.display="block";
+		if(document.getElementById("submit_illust") && document.getElementById("submit_text")){
+			document.getElementById("submit_illust").style.display="none";
+			document.getElementById("submit_text").style.display="none";
+			if(this._is_illust_exist || g_chat.is_chat_mode()){
+				document.getElementById("submit_illust").style.display="block";
+			}else{
+				document.getElementById("submit_text").style.display="block";
+			}
 		}
 	}
 }
