@@ -88,7 +88,13 @@ function ipad_import(){
 	//Android2.3まではf.typeも定義されていないし、
 	//FileReader APIも使えない
 	if(typeof FileReader == "undefined"){
-		alert("Android3未満ではFileReader APIが定義されていないため画像をアップロードできません。")
+		alert("Android3未満ではFileReader APIが定義されていないため画像をアップロードできません。Firefoxをご利用下さい。");
+		return;
+	}
+
+	//Android4.0の標準ブラウザはf.typeが定義されていない
+	if(!(f.type)){
+		alert("Androidの標準ブラウザはfile.typeが定義されていないため画像をアップロードできません。Chromeをご利用下さい。");
 		return;
 	}
 

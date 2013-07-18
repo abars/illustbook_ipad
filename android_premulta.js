@@ -36,3 +36,7 @@ function android_premulta_convert(image_data){
 		data[i+2]=data[i+2]*a/256;
 	}
 }
+
+function android_is_default_browser(){
+  
+}
