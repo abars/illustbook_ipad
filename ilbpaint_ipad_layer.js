@@ -98,6 +98,39 @@ function Layer(){
 			txt+="</div>";
 		}
 		document.getElementById("palette_tool_layer_list").innerHTML=txt;
+
+		var txt="";
+		if(!(g_chat.is_chat_mode())){
+			txt+='<div class="layer_button" ';
+			if(ipad_is_pc()){
+				txt+='onmousedown="g_layer.add_layer();" ';
+			}else{
+				txt+='ontouchstart="g_layer.add_layer();" ';
+			}
+			txt+='>レイヤーの追加</div>';
+			txt+='<div class="layer_button" ';
+			if(ipad_is_pc()){
+				txt+='onmousedown="g_layer.clear_layer();" ';
+			}else{
+				txt+='ontouchstart="g_layer.clear_layer();" '
+			}
+			txt+='>レイヤーのクリア</div>';
+			txt+='<div class="layer_button" ';
+			if(ipad_is_pc()){
+				txt+='onmousedown="g_layer.up_layer();" ';
+			}else{
+				txt+='ontouchstart="g_layer.up_layer();" ';
+			}
+			txt+='>一つ上に移動</div>';
+			txt+='<div class="layer_button" ';
+			if(ipad_is_pc()){
+				txt+='onmousedown="g_layer.down_layer();" ';
+			}else{
+				txt+='ontouchstart="g_layer.down_layer();" ';
+			}
+			txt+='>一つ下に移動</div>';
+		}
+		document.getElementById("layer_button_list").innerHTML=txt;
 		
 		if(!ipad_is_pc()){
 			for(var layer=LAYER_N-1;layer>=0;layer--){

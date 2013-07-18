@@ -59,10 +59,12 @@ function ColorCircle(){
 		
 		this.create();
 
-		document.getElementById("color_circle").addEventListener("mousedown", ipad_color_circle_on_mouse_down,false);
-		document.getElementById("color_circle").addEventListener("mousemove", ipad_color_circle_on_mouse_move,false);
-		document.getElementById("palette_tool").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
-		document.getElementById("toolmenu").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
+		if(ipad_is_pc()){
+			document.getElementById("color_circle").addEventListener("mousedown", ipad_color_circle_on_mouse_down,false);
+			document.getElementById("color_circle").addEventListener("mousemove", ipad_color_circle_on_mouse_move,false);
+			document.getElementById("palette_tool").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
+			document.getElementById("toolmenu").addEventListener("mouseup", ipad_color_circle_on_mouse_up,false);
+		}
 		
 		document.getElementById("color_circle").addEventListener("touchstart", ipad_color_circle_on_mouse_down,false);
 		document.getElementById("color_circle").addEventListener("touchmove", ipad_color_circle_on_mouse_move,false);

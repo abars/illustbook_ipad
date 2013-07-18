@@ -47,10 +47,12 @@ function BottomTool(){
 		
 		this._create(context);
 
-		document.getElementById("pen_tools").addEventListener("mousedown", ipad_bottom_tool_on_mouse_down,false);
-		document.getElementById("pen_tools").addEventListener("mousemove", ipad_bottom_tool_on_mouse_move,false);
-		document.getElementById("bottom_tool").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
-		document.getElementById("toolmenu").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
+		if(ipad_is_pc()){
+			document.getElementById("pen_tools").addEventListener("mousedown", ipad_bottom_tool_on_mouse_down,false);
+			document.getElementById("pen_tools").addEventListener("mousemove", ipad_bottom_tool_on_mouse_move,false);
+			document.getElementById("bottom_tool").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
+			document.getElementById("toolmenu").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
+		}
 		
 		document.getElementById("pen_tools").addEventListener("touchstart", ipad_bottom_tool_on_mouse_down,false);
 		document.getElementById("pen_tools").addEventListener("touchmove", ipad_bottom_tool_on_mouse_move,false);
