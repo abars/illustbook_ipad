@@ -47,7 +47,6 @@ function BottomTool(){
 		
 		this._create(context);
 
-
 		document.getElementById("pen_tools").addEventListener("mousedown", ipad_bottom_tool_on_mouse_down,false);
 		document.getElementById("pen_tools").addEventListener("mousemove", ipad_bottom_tool_on_mouse_move,false);
 		document.getElementById("bottom_tool").addEventListener("mouseup", ipad_bottom_tool_on_mouse_up,false);
@@ -85,6 +84,9 @@ function BottomTool(){
 		context.restore();
 		
 		this._size_box=context.getImageData(this._size_slider_x,0,this._size_slider_width,this._size_slider_height);
+
+		android_premulta_convert(this._alpha_box);
+		android_premulta_convert(this._size_box);
 	}
 	
 //-------------------------------------------------

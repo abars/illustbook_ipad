@@ -92,11 +92,14 @@ function ColorCircle(){
 			context.strokeStyle="rgb("+obj.r+","+obj.g+","+obj.b+")";
 			context.moveTo(offset_x+c*r1, offset_y+s*r1);
 			context.lineTo(offset_x+c*r2, offset_y+s*r2);
+			context.closePath();
 			context.stroke();
 		}
 
 		this._color_circle=context.getImageData(0,0,this._color_circle_width,this._color_circle_height);
 		this._color_box=this._boxg(context,0,0,this._color_box_width,this._color_box_height,0x000000);
+
+		android_premulta_convert(this._color_circle);
 	}
 	
 	this._draw=function(context){

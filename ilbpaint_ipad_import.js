@@ -84,12 +84,21 @@ var g_import=Import();
 
 function ipad_import(){
 	var f = document.getElementById("import").files[0];
+
+	//Android2.3まではf.typeも定義されていないし、
+	//FileReader APIも使えない
+	if(typeof FileReader == "undefined"){
+		alert("Android3未満ではFileReader APIが定義されていないため画像をアップロードできません。")
+		return;
+	}
+
+	//iOSの場合はf.typeが使える
 	if(f.type.match("image.*")){
-		var reader = new FileReader();
 		var image = new Image();
+		var reader = new FileReader();
 		reader.onload = function(evt) {
 			var data=evt.target.result;
-			
+				
 			//EXIFのOrientationを取得
 			var orientation=1;
 			if (data.split(',')[0].match('jpeg')) {
