@@ -98,10 +98,25 @@ function Upload(){
 		}
 
 		var thumbnail_can=document.getElementById("canvas_thumbnail");
-		var thumbnail = this._header_split(thumbnail_can.toDataURL("image/jpeg",0.95));
-		
+		var thumbnail_code=thumbnail_can.toDataURL("image/jpeg",0.95);
+		if(!thumbnail_code){
+			alert("toDataURL APIの呼び出しに失敗しました。");
+			return;
+		}
+		var thumbnail = this._header_split(thumbnail_code);
+
 		var image_can=document.getElementById("canvas_rendering");
-		var image = this._header_split(image_can.toDataURL("image/jpeg"));
+		var image_code=image_can.toDataURL("image/jpeg");
+		var image = this._header_split(image_code);
+
+		if(!thumbnail){
+			alert("サムネイルの取得に失敗しました。Android2.3の場合はFirefoxをご利用下さい。");
+			return;
+		}
+		if(!image){
+			alert("画像の取得に失敗しました。Android2.3の場合はFirefoxをご利用下さい。");
+			return;
+		}
 
 		this._append("thumbnail",thumbnail);
 		this._append("image",image);
