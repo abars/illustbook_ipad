@@ -172,6 +172,10 @@ function DrawCanvas(){
 
 		//ネットワークモードの場合は描画コマンドから再描画
 		this._draw_flag=false;
+
+		//アンロードをロックする
+		NeedUnloadCheck();
+
 		return command_list;
 	}
 

@@ -34,6 +34,12 @@ function Upload(){
 		if(reply=="0"){
 			title=document.getElementById("title").value;
 		}
+
+		var category=document.getElementById("category").value;
+		if(category=="add"){
+			category=document.getElementById("category_new").value;
+		}
+
 		var author=document.getElementById("name").value;
 		var comment=document.getElementById("comment").value;
 		var delete_key=document.getElementById("delete_key").value;
@@ -87,6 +93,7 @@ function Upload(){
 		this._append("delete_key",delete_key);
 		this._append("illust_mode",""+illust_mode);
 		this._append("mode","illust_all");
+		this._append("category",category);
 		this._append("base64","1");
 
 		link_to_profile=document.getElementById("link_to_profile")
@@ -146,6 +153,8 @@ function Upload(){
 	}
 	
 	this.go_bbs=function(oj){
+		NoNeedUnloadCheck();
+		
 		var url_text="bbs_index?bbs_key="+this._bbs_key
 		if(this._reply=="1"){
 			url_text="usr/"+this._bbs_key+"/"+this._thread_key+".html";
