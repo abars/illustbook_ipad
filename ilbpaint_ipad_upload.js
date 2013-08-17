@@ -29,9 +29,9 @@ function Upload(){
 		this._bbs_key=bbs_key;
 		this._thread_key=thread_key;
 		this._reply=reply;
-	
+
 		var title="";
-		if(reply=="0"){
+		if(reply!="1"){
 			title=document.getElementById("title").value;
 		}
 
