@@ -26,8 +26,14 @@ var g_import=new Import();
 var g_layer=new Layer();
 var g_rendering=new Rendering();
 var g_storage=new Storage();
+var g_is_english=false;
 
-function ipad_init(canvas_width,canvas_height,canvas_url){
+function ipad_init(canvas_width,canvas_height,canvas_url,is_english){
+	//英語版かどうか
+	if(is_english){
+		g_is_english=true;
+	}
+
 	//キャンバス作成
 	g_layer.init(canvas_width,canvas_height);
 
@@ -240,6 +246,10 @@ function ipad_on_mouse_up_core(){
 
 function ipad_is_pc(){
 	return (window.ontouchstart===undefined);
+}
+
+function ipad_is_english(){
+	return g_is_english;
 }
 
 //-------------------------------------------------

@@ -191,6 +191,10 @@ function Upload(){
 	this._create_thumbnail=function(){
 		var thumbnail_can=document.getElementById("canvas_thumbnail");
 		var image_data=thumbnail_can.getContext("2d").createImageData(thumbnail_can.width,thumbnail_can.height);
+
+		for(var i=0;i<image_data.data.length;i++){
+			image_data.data[i]=255;
+		}
 		
 		this._rendering();
 		var image_can=document.getElementById("canvas_rendering");
