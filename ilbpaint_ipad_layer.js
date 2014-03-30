@@ -84,9 +84,18 @@ function Layer(){
 				txt+="<canvas id='layer_button_canvas_"+layer+"' width='42px' height='42px'></canvas>";
 			txt+="</div>";
 			txt+="<div style='padding-left:4px;float:left;'>";
-			txt+="レイヤー"+(layer+1)+"　";
+			if(ipad_is_english()){
+				txt+="Layer";
+			}else{
+				txt+="レイヤー";
+			}
+			txt+=""+(layer+1)+"　";
 			var layer_enable="";
-			txt+=LAYER_MODE_NAME[this._layer_mode[layer]];
+			var lang=0;
+			if(ipad_is_english()){
+				lang=1;
+			}
+			txt+=LAYER_MODE_NAME[this._layer_mode[layer]*2+lang];
 			if(this._layer_mode[layer]){
 				layer_enable="block";
 			}else{
@@ -107,28 +116,52 @@ function Layer(){
 			}else{
 				txt+='ontouchstart="g_layer.add_layer();" ';
 			}
-			txt+='>レイヤーの追加</div>';
+			txt+='>';
+			if(ipad_is_english()){
+				txt+='Add layer';
+			}else{
+				txt+='レイヤーの追加';
+			}
+			txt+='</div>';
 			txt+='<div class="layer_button" ';
 			if(ipad_is_pc()){
 				txt+='onmousedown="g_layer.clear_layer();" ';
 			}else{
 				txt+='ontouchstart="g_layer.clear_layer();" '
 			}
-			txt+='>レイヤーのクリア</div>';
+			txt+='>';
+			if(ipad_is_english()){
+				txt+='Clear layer';
+			}else{
+				txt+='レイヤーのクリア';
+			}
+			txt+='</div>';
 			txt+='<div class="layer_button" ';
 			if(ipad_is_pc()){
 				txt+='onmousedown="g_layer.up_layer();" ';
 			}else{
 				txt+='ontouchstart="g_layer.up_layer();" ';
 			}
-			txt+='>一つ上に移動</div>';
+			txt+='>';
+			if(ipad_is_english()){
+				txt+='Up';
+			}else{
+				txt+='一つ上に移動';
+			}
+			txt+='</div>';
 			txt+='<div class="layer_button" ';
 			if(ipad_is_pc()){
 				txt+='onmousedown="g_layer.down_layer();" ';
 			}else{
 				txt+='ontouchstart="g_layer.down_layer();" ';
 			}
-			txt+='>一つ下に移動</div>';
+			txt+='>';
+			if(ipad_is_english()){
+				txt+='Down';
+			}else{
+				txt+='一つ下に移動';
+			}
+			txt+='</div>';
 		}
 		document.getElementById("layer_button_list").innerHTML=txt;
 		

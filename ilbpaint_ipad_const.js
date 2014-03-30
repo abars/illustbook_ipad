@@ -11,7 +11,7 @@ var LAYER_MODE_ADD=2;
 
 var LAYER_MODE_N=2;
 
-var LAYER_MODE_NAME=new Array("非表示","通常","加算");
+var LAYER_MODE_NAME=new Array("非表示","Hidden","通常","Normal","加算","Add");
 
 var CMD_DRAW=0;
 var CMD_TEXT=1;
