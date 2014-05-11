@@ -61,14 +61,14 @@ function User(){
 			txt+="<img src='./show_icon?key="+id+"' width='30px' height='30px' alt='"+name+"'>";
 			txt+="</a>";
 		}
-		txt+="<BR><small>"+this._user_list.length+"人参加</small>";
+		txt+="<BR><small>"+this._user_list.length+(ipad_is_english() ? "Person":"人参加")+"</small>";
 
 		document.getElementById("user_list").innerHTML=txt;
 	}
 	
 	this._update_status=function(){
 		var perc=this._datastore_size;
-		var txt="<small>容量の"+perc+"%を使用</small>";
+		var txt="<small>"+(ipad_is_english() ? "Use ":"容量の")+perc+"%"+(ipad_is_english() ? " of storage":"を使用")+"</small>";
 		document.getElementById("status").innerHTML=txt;
 	}
 	
@@ -76,7 +76,7 @@ function User(){
 		for(var i=0;i<this._user_list.length;i++){
 			var user=this._user_list[i];
 			if(user.id==client_id){
-				g_buffer._update_comment({"comment":""+user.name+"さんが退室しました。"});
+				g_buffer._update_comment({"comment":""+user.name+(ipad_is_english() ? " leave a room":"さんが退室しました。")});
 				this._user_list.splice(i,1);
 				this._show_all_user();	//ステータス更新
 				return;
@@ -86,7 +86,7 @@ function User(){
 	
 	//ユーザ追加
 	this._add_user=function(name,id,time){
-		g_buffer._update_comment({"comment":""+name+"さんが参加しました。"});
+		g_buffer._update_comment({"comment":""+name+(ipad_is_english() ? " is coming":"さんが参加しました。")});
 
 		var obj=new Object();
 		obj.name=name;

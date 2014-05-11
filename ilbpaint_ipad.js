@@ -62,7 +62,7 @@ function ipad_init(canvas_width,canvas_height,canvas_url,is_english){
 	if(g_viewmode){
 		g_buffer._update_comment({"comment":"閲覧モードで起動しました。書き込みはできません。"});
 	}
-	g_buffer._update_comment({"comment":"初期読込を開始します。"});
+	g_buffer._update_comment({"comment":(ipad_is_english() ? "Begin initial loading":"初期読込を開始します。")});
 }
 
 //-------------------------------------------------

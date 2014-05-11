@@ -37,15 +37,15 @@ function ToolBox(){
 		
 		if(g_chat.is_chat_mode()){
 			txt+=this._add_button("g_tool.set_hand","ハンド","Hand",s,0);
-			txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+","Zoom+",s,margin);
-			txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-","Zoom-",s,0);
+			txt+=this._add_button("g_hand.zoom_in","ズーム<BR>+","Zoom +",s,margin);
+			txt+=this._add_button("g_hand.zoom_out","ズーム<BR>-","Zoom -",s,0);
 		}else{
 			if(ipad_is_pc()){
 				txt+=this._add_button("g_tool.set_hand","ハンド","Hand",s,0);
 			}else{
 				txt+=this._add_button("g_tool.set_hand","ムーブ","Move",s,0);
 			}
-			txt+=this._add_button("ipad_switch_storage_form","記録","Store",s,margin);
+			txt+=this._add_button("ipad_switch_storage_form","記録","File",s,margin);
 		}
 		var submit_button_exist=(window.innerWidth>480 || !g_chat.is_chat_mode());
 		if(!(g_chat.is_view_mode()) && submit_button_exist){

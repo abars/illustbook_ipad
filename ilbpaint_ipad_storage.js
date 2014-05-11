@@ -18,7 +18,7 @@ function Storage(){
 	}
 
 	this.save=function(){
-		if(!confirm("ローカルストレージに保存しますか？")){
+		if(!confirm((ipad_is_english() ? "Save to local storage?":"ローカルストレージに保存しますか？"))){
 			return;
 		}
 		var id="temp";
@@ -32,14 +32,14 @@ function Storage(){
 			window.localStorage[id+"_layer"+layer+"_mode"]=layer_mode;
 			window.localStorage[id+"_layer"+layer+"_image"]=layer_image;
 		}
-		alert("保存が完了しました。");
+		alert((ipad_is_english() ? "Complete":"保存が完了しました。"));
 		ipad_switch_storage_form();
 	}
 
 	this.load=function(){
 		var id="temp";
 		if(!window.localStorage[id+"_enable"]){
-			alert("保存されているデータがありません。");
+			alert((ipad_is_english() ? "No data exist":"保存されているデータがありません。"));
 			return;
 		}
 		var layer_n=Number(window.localStorage[id+"_layers"]);
@@ -99,7 +99,7 @@ function Storage(){
 
 		//完了通知
 		g_upload.set_illust_exist();
-		alert("読込が完了しました。取り消しで読込前の状態に戻ることもできます。");
+		alert((ipad_is_english() ? "Complete":"読込が完了しました。取り消しで読込前の状態に戻ることもできます。"));
 		ipad_switch_storage_form();
 	}
 }
