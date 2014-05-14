@@ -249,6 +249,8 @@ function Layer(){
 		this._update_canvas_size(document.getElementById("canvas_rendering"),image);
 		document.getElementById("canvas_div").style.width=image.width+64;
 		document.getElementById("canvas_div").style.height=image.height+64;
+
+		g_hand.init();
 	}
 
 	this.on_click_layer=function(layer_no,is_touch){

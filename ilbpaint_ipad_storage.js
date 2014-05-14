@@ -102,4 +102,25 @@ function Storage(){
 		alert((ipad_is_english() ? "Complete":"読込が完了しました。取り消しで読込前の状態に戻ることもできます。"));
 		ipad_switch_storage_form();
 	}
+
+	this.resize=function(){
+		var width=Number(document.getElementById("canvas_width").value);
+		var height=Number(document.getElementById("canvas_height").value);
+		
+		//現在のキャンバスをクリア
+		g_undo_redo.push_all();
+		for(var layer=0;layer<LAYER_N;layer++){
+			var context=can_fixed[layer].getContext("2d");
+			context.clearRect(0,0,can_fixed[layer].width, can_fixed[layer].height);
+		}
+
+		//キャンバスサイズを変更
+		var size_object=new Object();
+		size_object.width=width;
+		size_object.height=height;
+
+		g_layer.change_canvas_size(size_object);
+
+		ipad_switch_storage_form();
+	}
 }
