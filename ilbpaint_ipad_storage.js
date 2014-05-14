@@ -107,6 +107,10 @@ function Storage(){
 		var width=Number(document.getElementById("canvas_width").value);
 		var height=Number(document.getElementById("canvas_height").value);
 		
+		if(!width || !height){
+			return;
+		}
+
 		//現在のキャンバスをクリア
 		g_undo_redo.push_all();
 		for(var layer=0;layer<LAYER_N;layer++){
