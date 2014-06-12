@@ -215,8 +215,8 @@ function Upload(){
 		ox=Math.floor((100-image_can.width/mx)/2);
 		oy=Math.floor((100-image_can.height/my)/2)
 		
-		for(var y=0;y<image_can.height/my;y++){
-			for(var x=0;x<image_can.width/mx;x++){
+		for(var y=0;y<Math.floor(image_can.height/my);y++){
+			for(var x=0;x<Math.floor(image_can.width/mx);x++){
 				var fx=x*mx;
 				var fy=y*my;
 				for(var rgb=0;rgb<4;rgb++){
