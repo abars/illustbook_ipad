@@ -115,8 +115,8 @@ function Hand(){
 		if(new_zoom<1.0){
 			new_zoom=1.0;
 		}
-		if(new_zoom>3){
-			new_zoom=3;
+		if(new_zoom>10){
+			new_zoom=10;
 		}
 
 		this._hand_x-=(this._hand_x*new_zoom-this._hand_x*this._zoom)/new_zoom;
