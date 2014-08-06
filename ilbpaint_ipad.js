@@ -93,8 +93,8 @@ function ipad_get_instance(){
 	can_work = document.getElementById("canvas_work");
 	can_div = document.getElementById("canvas_div"); 
 	
-	g_button_width=48;
-	g_button_height=48;
+	g_button_width=32;
+	g_button_height=32;
 	
 	g_size_width=32;
 	g_color_width=38;
@@ -110,6 +110,7 @@ function ipad_event_init(){
 	if(ipad_is_pc()){
 		can_div.addEventListener("mousemove", ipad_on_mouse_move, false);
 		can_div.addEventListener("mousedown", ipad_on_mouse_down , false);
+		can_div.addEventListener("contextmenu", ipad_on_mouse_context , false);
 		can_event.addEventListener("mouseup", ipad_on_mouse_up,false);	//画面外でUpされた場合用
 	}
 	
@@ -129,7 +130,8 @@ function ipad_event_init(){
 */
 
 	//リサイズ
-	window.onresize=function(e){ g_hand.resize(true); }
+	window.onresize=function(e){ g_hand.resize(); }
+	window.onmousewheel=function(e){ g_hand.zoom_wheel(e.wheelDelta); }
 }
 
 this._before_scale;
@@ -181,6 +183,12 @@ function ipad_on_mouse_down(e){
 		return;
 	}
 	ipad_on_mouse_down_core(e.clientX,e.clientY);
+	e.preventDefault();
+}
+
+function ipad_on_mouse_context(e){
+	g_spoit.on_context_menu(e.clientX,e.clientY);
+	e.preventDefault();
 }
 
 function ipad_on_mouse_move_core(x,y){

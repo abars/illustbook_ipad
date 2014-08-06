@@ -11,26 +11,28 @@ function BottomTool(){
 	this._canvas_width;
 	this._canvas_height;
 
-	this._size_slider_x=120;
-	this._size_slider_y=4;
-	this._size_slider_width=180;
-	this._size_slider_height=50;
+	this._size_slider_x=4;
+	this._size_slider_y=2+1;
+	this._size_slider_width=150;
+	this._size_slider_height=32-8;
 
-	this._alpha_slider_x=310;
-	this._alpha_slider_y=4;
-	this._alpha_slider_width=160;
-	this._alpha_slider_height=50;
+	this._alpha_slider_x=this._size_slider_x+this._size_slider_width+4;
+	this._alpha_slider_y=2-1;
+	this._alpha_slider_width=150;
+	this._alpha_slider_height=32-4;
 	
-	this._layer_x=60;
-	this._layer_y=4;
-	this._layer_width=50;
-	this._layer_height=50;
+	/*
+	this._layer_x=9999;//2+32+4;
+	this._layer_y=2;
+	this._layer_width=32;//50;
+	this._layer_height=32;//50;
 
-	this._palette_x=4;
-	this._palette_y=4;
-	this._palette_width=50;
-	this._palette_height=50;
-	
+	this._palette_x=9999;//2;
+	this._palette_y=2;
+	this._palette_width=31;//50;
+	this._palette_height=31;//50;
+	*/
+
 	this._tool=0;
 	
 	this._pen_size=new Array(30,70,80,70);
@@ -60,18 +62,22 @@ function BottomTool(){
 		document.getElementById("toolmenu").addEventListener("touchend", ipad_bottom_tool_on_mouse_up,false);
 	}
 
+	this._UI_COLOR="#ffffff";//5f5fef";
+	this._UI_COLOR_BG="#ffffff";//c7e5f9";
+	this._CIRCLE_COLOR="#292929";
+
 	this._create=function(context){
 		context.save();
 		for(x=0;x<this._alpha_slider_width;x++){
 			var h=this._alpha_slider_height*0.75;
-			context.fillStyle="#c7e5f9";
+			context.fillStyle=this._UI_COLOR_BG;
 			context.globalAlpha=1.0*x/this._alpha_slider_width;
 			context.fillRect(x+this._alpha_slider_x,(this._alpha_slider_height-h)/2,1,h);
 		}
 		context.restore();
 
 		var h=this._alpha_slider_height*0.75;
-		context.strokeStyle="#c7e5f9";
+		context.strokeStyle=this._UI_COLOR_BG;
 		context.rect(this._alpha_slider_x,(this._alpha_slider_height-h)/2,this._alpha_slider_width,h);
 		context.stroke();
 
@@ -80,7 +86,7 @@ function BottomTool(){
 		context.save();
 		for(x=0;x<this._size_slider_width;x++){
 			var h=this._get_size_core(x);
-			context.fillStyle="#c7e5f9";
+			context.fillStyle=this._UI_COLOR_BG;
 			context.fillRect(x+this._size_slider_x,(this._size_slider_height-h)/2,1,h);
 		}
 		context.restore();
@@ -104,19 +110,20 @@ function BottomTool(){
 		this._draw_slider(context,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height,this._pen_size[this._tool]);
 this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height,this._alpha[this._tool]*this._alpha_slider_width/100);
 
-		this._draw_layer(context);
-		this._draw_palette(context);
+		//this._draw_layer(context);
+		//this._draw_palette(context);
 	}
 
 //-------------------------------------------------
 //レイヤー
 //-------------------------------------------------
 
+	/*
 	this._draw_layer=function(context){
 		var s=10;
 		
 		context.beginPath();
-		context.strokeStyle="#5f5fef";
+		context.strokeStyle=this._UI_COLOR;//"#5f5fef";
 		context.rect(this._layer_x+s,this._layer_y+s,this._layer_width-s,this._layer_height-s);
 		context.closePath();
 		context.stroke();
@@ -134,13 +141,14 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		context.rect(this._palette_x,this._palette_y,this._palette_width,this._palette_height);
 		context.fill();
 
-		context.strokeStyle="#5f5fef";
+		context.strokeStyle=this._UI_COLOR;//"#5f5fef";
 		context.rect(this._palette_x,this._palette_y,this._palette_width,this._palette_height);
 		context.stroke();
 
 		context.closePath();
 		context.stroke();
 	}
+	*/
 	
 //-------------------------------------------------
 //ペンサイズとα
@@ -188,7 +196,7 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		context.putImageData(this._size_box,this._size_slider_x,this._size_slider_y);
 
 		context.beginPath();
-		context.strokeStyle="#5f5fef";
+		context.strokeStyle=this._CIRCLE_COLOR;//"#5f5fef";
 		var s=this.get_size()/2;
 		context.arc(x+cursor,y+h/2,s, 0, Math.PI*2, false);
 		context.closePath();
@@ -201,7 +209,7 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		h=h*a;
 		context.putImageData(this._alpha_box,this._alpha_slider_x,this._alpha_slider_y);
 		context.beginPath();
-		context.strokeStyle="#5f5fef";
+		context.strokeStyle=this._UI_COLOR;//"#5f5fef";
 		context.rect(x-2+cursor,y-2,4,h+4);
 		context.closePath();
 		context.stroke();
@@ -250,6 +258,7 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 			this._focus=FOCUS_ALPHA;
 		}
 
+		/*
 		if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
 			if(this._sub_tool==SUB_TOOL_LAYER){
 				this._sub_tool=SUB_TOOL_NONE;
@@ -267,8 +276,27 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 			}
 			this._update_sub_tool();
 		}
+		*/
 
 		this._is_hold=true;
+	}
+
+	this.click_layer_button=function(){
+		if(this._sub_tool==SUB_TOOL_LAYER){
+			this._sub_tool=SUB_TOOL_NONE;
+		}else{
+			this._sub_tool=SUB_TOOL_LAYER;
+		}
+		this._update_sub_tool();
+	}
+
+	this.click_color_button=function(){
+		if(this._sub_tool==SUB_TOOL_COLOR){
+			this._sub_tool=SUB_TOOL_NONE;
+		}else{
+			this._sub_tool=SUB_TOOL_COLOR;
+		}
+		this._update_sub_tool();
 	}
 	
 	this._update_sub_tool=function(){
@@ -286,8 +314,10 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		}
 		if(this._sub_tool==SUB_TOOL_LAYER){
 			document.getElementById("palette_tool_layer").style.display="block";
+			document.getElementById("g_bottom_tool.click_layer_button()").style["backgroundColor"]="#292929";
 		}else{
 			document.getElementById("palette_tool_layer").style.display="none";
+			document.getElementById("g_bottom_tool.click_layer_button()").style["backgroundColor"]="#494949";
 		}
 		
 		this._show_layer_tool();
@@ -358,6 +388,7 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 	
 	this.update_color=function(){
 		this._redraw();
+		g_tool.update_color_status(g_color_circle.get_hex_color());
 	}
 }
 

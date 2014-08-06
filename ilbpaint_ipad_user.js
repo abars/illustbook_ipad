@@ -53,22 +53,24 @@ function User(){
 	//ユーザ一覧を表示
 	this._show_all_user=function(){
 		var txt="";
+		txt+="<small>"+this._user_list.length+(ipad_is_english() ? "Person":"人参加")+"</small><br/>";
 		for(var i=0;i<this._user_list.length;i++){
 			var user=this._user_list[i];
 			var name=user.name;
 			var id=user.id.split("_")[0];
-			txt+="<a href='./mypage?user_id="+id+"' target='_BLANK' title='"+name+"'>";
-			txt+="<img src='./show_icon?key="+id+"' width='30px' height='30px' alt='"+name+"'>";
+			txt+="<a href='./mypage?user_id="+id+"' target='_BLANK' title='"+name+"' style='text-decoration:none;'>";
+			//txt+="<img src='./show_icon?key="+id+"' width='30px' height='30px' alt='"+name+"'>";
+			txt+="<font color='#ffffff'><small>"+name+"</small></font>";
 			txt+="</a>";
+			txt+="&nbsp;";////<br/>"
 		}
-		txt+="<BR><small>"+this._user_list.length+(ipad_is_english() ? "Person":"人参加")+"</small>";
 
 		document.getElementById("user_list").innerHTML=txt;
 	}
 	
 	this._update_status=function(){
 		var perc=this._datastore_size;
-		var txt="<small>"+(ipad_is_english() ? "Use ":"容量の")+perc+"%"+(ipad_is_english() ? " of storage":"を使用")+"</small>";
+		var txt="";//<small>"+(ipad_is_english() ? "Use ":"容量の")+perc+"%"+(ipad_is_english() ? " of storage":"を使用")+"</small>";
 		document.getElementById("status").innerHTML=txt;
 	}
 	

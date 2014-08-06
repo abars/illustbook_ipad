@@ -72,7 +72,7 @@ function Palette(){
 			if(i!=this._selecting_no){
 				w=g_color_width-8;
 				h=g_color_width-8;
-				document.getElementById("palette"+i).style.border="solid 4px #ffffff";
+				document.getElementById("palette"+i).style.border="solid 4px #494949";//ffffff";
 			}else{
 				document.getElementById("palette"+i).style.border="none";
 			}

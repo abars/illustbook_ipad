@@ -93,6 +93,15 @@ function DrawCanvas(){
 	}
 
 	this.on_mouse_down=function(x,y){
+		if(g_tool.get_tool()=="fill"){
+			g_undo_redo.push();
+			var context=can_fixed[g_layer.get_layer_no()].getContext("2d");
+			var alpha=Math.floor(g_bottom_tool.get_alpha()*255);
+			floodFill(Math.floor(this._get_mx(x)),Math.floor(this._get_my(y)),context,g_palette.get_color(),alpha);
+			g_buffer.undo_redo_exec_on_local_tool();
+			return;
+		}
+
 		this._draw_begin();
 		
 		this._add_point(this._get_mx(x),this._get_my(y));

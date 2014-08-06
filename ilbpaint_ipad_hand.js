@@ -18,10 +18,10 @@ function Hand(){
 	this._flag=false;
 	this._zoom=1;
 	
-	this.resize=function(offset_recalc){
-		if(!offset_recalc){
+	this.resize=function(){
+		//if(!offset_recalc){
 			g_window_height=window.innerHeight;
-		}
+		//}
 		
 		var cheight=document.getElementById("canvas_event").clientHeight;
 
@@ -29,19 +29,18 @@ function Hand(){
 		var new_height=(g_window_height-toolheight);
 		document.getElementById("canvas_event").style.height=""+new_height+"px";
 		
+		/*
 		if(offset_recalc){
 			var add=(new_height-cheight)/2;
 			this._hand_y+=add/this._zoom;
 			can_div.style.top=""+this._hand_y+"px";
 		}
+		*/
+
+		this._center();
 	}
-	
-	this.init=function(){
-		this._buttom_size=0;//document.getElementById("bottom_tool").clientHeight;
-		this._left_size=0;//document.getElementById("toolmenu").clientWidth;
-		
-		this.resize(false);
-		
+
+	this._center=function(){
 		var margin=32;	//キャンバス外イベント確保用マージン
 		
 		var cwidth=document.getElementById("canvas_event").clientWidth-this._left_size;
@@ -52,6 +51,14 @@ function Hand(){
 
 		can_div.style.left=""+this._hand_x+"px";
 		can_div.style.top=""+this._hand_y+"px";
+	}
+	
+	this.init=function(){
+		this._buttom_size=0;//document.getElementById("bottom_tool").clientHeight;
+		this._left_size=0;//document.getElementById("toolmenu").clientWidth;
+		
+		this.resize();
+		//this.center();
 	}
 	
 	this.get_zoom=function(){
@@ -90,6 +97,11 @@ function Hand(){
 		
 		this._before_x=x;
 		this._before_y=y;
+	}
+
+	this.zoom_wheel=function(delta){
+		var z=this._zoom+(delta/1000.0);
+		this._zoom_core(z);
 	}
 	
 	this.zoom_in=function(){

@@ -28,6 +28,10 @@ function Spoit(){
 	this.on_mouse_up=function(){
 		this._hold=false;
 	}
+
+	this.on_context_menu=function(x,y){
+		this._spoit_core(x,y,g_tool.get_tool()=="canvas_spoit");
+	}
 	
 	this._spoit_core=function(x,y,is_canvas_spoit){
 		var color=g_draw_canvas.get_color_of_canvas(can_local[g_layer.get_layer_no()],x,y);

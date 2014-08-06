@@ -60,6 +60,8 @@ function Layer(){
 		this.get_canvas();
 	}
 	
+	this.ACTIVE_COLOR="#292929";//ffffff";//#c7e5f9";
+
 	this.show_layer_tool=function(){
 		var txt="";
 		for(var layer=LAYER_N-1;layer>=0;layer--){
@@ -71,9 +73,9 @@ function Layer(){
 			}
 			var layer_style="width:"+button_width+"px;height:"+button_height+"px;border-radius:4px;padding:4px;margin:4px;";
 			if(this._layer==layer){
-				layer_style+="background-color:#c7e5f9;";
+				layer_style+="background-color:"+this.ACTIVE_COLOR+";";
 			}else{
-				layer_style+="border:solid 1px #c7e5f9;";
+				layer_style+="border:solid 1px "+this.ACTIVE_COLOR+";";
 			}
 			var layer_event="";
 			if(ipad_is_pc()){
