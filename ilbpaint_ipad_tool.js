@@ -15,7 +15,6 @@ function ToolBox(){
 		if(ipad_is_english()){
 			info=info_eng;
 		}
-		//var button_style="width:"+g_button_width+"px;height:"+g_button_height+"px;";
 		var txt='<div id="'+cmd+'"';
 		if(ipad_is_pc()){
 			txt+=' onclick="javascript:'+cmd+'(false);"';
@@ -33,7 +32,7 @@ function ToolBox(){
 
 	this.init=function(){
 		var txt="";
-		var s=0;//g_button_width+20;
+		var s=0;
 		var margin=16;
 
 		txt+=this._add_button("g_bottom_tool.click_color_button()","","","",s,0);
@@ -83,27 +82,6 @@ function ToolBox(){
 		}
 
 		document.getElementById("toolmenu2").innerHTML=txt;
-
-		//遅延登録が必須
-		/*
-		if(!ipad_is_pc()){
-			document.getElementById("g_undo_redo.undo").addEventListener("touchstart", function(e){g_undo_redo.undo(true);e.preventDefault();},false);
-			document.getElementById("g_undo_redo.redo").addEventListener("touchstart", function(e){g_undo_redo.redo(true);e.preventDefault();},false);
-			document.getElementById("g_tool.set_pen").addEventListener("touchstart", function(e){g_tool.set_pen();e.preventDefault();},false);
-			document.getElementById("g_tool.set_eraser").addEventListener("touchstart", function(e){g_tool.set_eraser();e.preventDefault();},false);
-			document.getElementById("g_tool.set_spoit").addEventListener("touchstart", function(e){g_tool.set_spoit();e.preventDefault();},false);
-			document.getElementById("g_tool.set_hand").addEventListener("touchstart", function(e){g_tool.set_hand();e.preventDefault();},false);
-			if(g_chat.is_chat_mode()){
-				document.getElementById("g_hand.zoom_out").addEventListener("touchstart", function(e){g_hand.zoom_out(true);e.preventDefault();},false);
-				document.getElementById("g_hand.zoom_in").addEventListener("touchstart", function(e){g_hand.zoom_in(true);e.preventDefault();},false);
-			}else{
-				document.getElementById("ipad_switch_storage_form").addEventListener("touchstart", function(e){ipad_switch_storage_form(true);e.preventDefault();},false);
-			}
-			if(!(g_chat.is_view_mode()) && submit_button_exist){
-				document.getElementById("ipad_switch_upload_form").addEventListener("touchstart", function(e){ipad_switch_upload_form(true);e.preventDefault();},false);
-			}
-		}
-		*/
 	}
 
 	this._get_button_color=function(enable){

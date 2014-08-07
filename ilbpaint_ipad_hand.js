@@ -4,24 +4,19 @@
 //-------------------------------------------------
 
 function Hand(){
+	this._EVENT_MARGIN=32;	//キャンバス外イベント確保用マージン
+
 	this._hand_x=0;
 	this._hand_y=0;
 
 	this._before_x=0;
 	this._begore_y=0;
 
-	this._buttom_size;
-	this._left_size;
-	
-	this._before_dist=0;
-
 	this._flag=false;
 	this._zoom=1;
 	
 	this.resize=function(){
-		//if(!offset_recalc){
-			g_window_height=window.innerHeight;
-		//}
+		g_window_height=window.innerHeight;
 		
 		var cheight=document.getElementById("canvas_event").clientHeight;
 
@@ -29,36 +24,23 @@ function Hand(){
 		var new_height=(g_window_height-toolheight);
 		document.getElementById("canvas_event").style.height=""+new_height+"px";
 		
-		/*
-		if(offset_recalc){
-			var add=(new_height-cheight)/2;
-			this._hand_y+=add/this._zoom;
-			can_div.style.top=""+this._hand_y+"px";
-		}
-		*/
-
 		this._center();
 	}
 
 	this._center=function(){
-		var margin=32;	//キャンバス外イベント確保用マージン
-		
-		var cwidth=document.getElementById("canvas_event").clientWidth-this._left_size;
-		var cheight=document.getElementById("canvas_event").clientHeight-this._buttom_size;
+		var cwidth=document.getElementById("canvas_event").clientWidth;
+		var cheight=document.getElementById("canvas_event").clientHeight;
 	
-		this._hand_x=Math.floor(cwidth-can_drawing[0].width)/2+this._left_size-margin;
-		this._hand_y=Math.floor(cheight-can_drawing[0].height)/2-margin;
+		this._hand_x=Math.floor((cwidth-(can_drawing[0].width+this._EVENT_MARGIN*2)*this._zoom)/2/this._zoom);
+		this._hand_y=Math.floor((cheight-(can_drawing[0].height+this._EVENT_MARGIN*2)*this._zoom)/2/this._zoom);
+
 
 		can_div.style.left=""+this._hand_x+"px";
 		can_div.style.top=""+this._hand_y+"px";
 	}
 	
 	this.init=function(){
-		this._buttom_size=0;//document.getElementById("bottom_tool").clientHeight;
-		this._left_size=0;//document.getElementById("toolmenu").clientWidth;
-		
 		this.resize();
-		//this.center();
 	}
 	
 	this.get_zoom=function(){
@@ -72,7 +54,6 @@ function Hand(){
 	this.on_mouse_down=function(x,y,x2,y2){
 		this._flag=true;
 		this._before_x=0;
-		this._before_dist=0;
 	}
 	
 	this.on_mouse_up=function(x,y,x2,y2){
@@ -99,7 +80,16 @@ function Hand(){
 		this._before_y=y;
 	}
 
+	this._zoom_cursor_x=0;
+	this._zoom_cursor_y=0;
+
+	this.set_zoom_cursor=function(x,y){
+		this._zoom_cursor_x=x;
+		this._zoom_cursor_y=y;
+	}
+
 	this.zoom_wheel=function(delta){
+		var cursor=document.getElementById("cursor");
 		var z=this._zoom+(delta/1000.0);
 		this._zoom_core(z);
 	}
@@ -133,9 +123,17 @@ function Hand(){
 
 		this._hand_x-=(this._hand_x*new_zoom-this._hand_x*this._zoom)/new_zoom;
 		this._hand_y-=(this._hand_y*new_zoom-this._hand_y*this._zoom)/new_zoom;
+
+		var pos_x=(can_fixed[0].width+this._EVENT_MARGIN)/2;
+		var pos_y=(can_fixed[0].height+this._EVENT_MARGIN)/2;
 	
-		this._hand_x-=(can_fixed[0].width*new_zoom-can_fixed[0].width*this._zoom)/2/new_zoom;
-		this._hand_y-=(can_fixed[0].height*new_zoom-can_fixed[0].height*this._zoom)/2/new_zoom;
+		if(ipad_is_pc()){
+			pos_x=(this._zoom_cursor_x+this._EVENT_MARGIN/2);
+			pos_y=(this._zoom_cursor_y+this._EVENT_MARGIN/2);
+		}
+
+		this._hand_x-=(pos_x*new_zoom-pos_x*this._zoom)/new_zoom;
+		this._hand_y-=(pos_y*new_zoom-pos_y*this._zoom)/new_zoom;
 		
 		can_div.style.left=""+Math.floor(this._hand_x)+"px";
 		can_div.style.top=""+Math.floor(this._hand_y)+"px";
@@ -144,6 +142,10 @@ function Hand(){
 		can_div.style.zoom=""+Math.floor(this._zoom*100)+"%";
 	}
 	
+	this.get_zoom_for_cursor=function(){
+		return this._zoom;
+	}
+
 	this.is_hand_mode=function(){
 		return g_tool.get_tool()=="hand" && (g_chat.is_chat_mode() || ipad_is_pc());
 	}

@@ -35,7 +35,7 @@ function BottomTool(){
 
 	this._tool=0;
 	
-	this._pen_size=new Array(30,70,80,70);
+	this._pen_size=new Array(30,70,70,70);
 	this._alpha=new Array(100,100,100,100);
 	
 	this._sub_tool=SUB_TOOL_NONE;

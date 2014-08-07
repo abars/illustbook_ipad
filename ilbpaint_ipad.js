@@ -192,6 +192,7 @@ function ipad_on_mouse_context(e){
 }
 
 function ipad_on_mouse_move_core(x,y){
+	g_draw_canvas.update_cursor(x,y);
 	if(g_layer_move.is_move_mode()){
 		g_layer_move.on_mouse_move(x,y);
 		return;

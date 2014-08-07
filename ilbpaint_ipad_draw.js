@@ -119,6 +119,18 @@ function DrawCanvas(){
 		
 		g_undo_redo.push();
 	}
+
+	this.update_cursor=function(x,y){
+		var circle=document.getElementById("cursor");
+		var size=Math.floor(g_bottom_tool.get_size()*g_hand.get_zoom_for_cursor());
+		circle.style.left=""+Math.floor(x-size/2)+"px";
+		circle.style.top=""+Math.floor(y-size/2)+"px";
+		circle.style.width=""+size+"px";
+		circle.style.height=""+size+"px";
+		circle.style["borderRadius"]=""+Math.floor(size/2)+"px";
+		circle.style.display="block";
+		g_hand.set_zoom_cursor(this._get_mx(x),this._get_my(y));
+	}
 	
 	this.on_mouse_move=function(x,y){
 		if(!this._draw_flag){
@@ -245,6 +257,8 @@ function DrawCanvas(){
 	} 
 	
 	this._draw_blur=function(canvas,x_array,y_array,pos,color,size,is_same_point){
+		size*=0.5;
+
 		var context = canvas.getContext("2d");
 		var sigma = 1.0;
 		var cnt=size*sigma;
