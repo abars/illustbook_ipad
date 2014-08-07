@@ -52,9 +52,11 @@ function ToolBox(){
 		//txt+=this._add_button("g_tool.set_canvas_spoit","","C","spoit",s,0);
 		
 		if(g_chat.is_chat_mode()){
-			txt+=this._add_button("g_tool.set_hand","","","hand",s,margin);
+			txt+=this._add_button("g_tool.set_hand","","","hand",s,0);
+			/*
 			txt+=this._add_button("g_hand.zoom_in","","","zoom_in",s,0);
 			txt+=this._add_button("g_hand.zoom_out","","","zoom_out",s,0);
+			*/
 		}else{
 			if(ipad_is_pc()){
 				txt+=this._add_button("g_tool.set_hand","","","hand",s,0);
