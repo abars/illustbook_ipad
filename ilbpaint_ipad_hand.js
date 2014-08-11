@@ -95,11 +95,11 @@ function Hand(){
 	}
 	
 	this.zoom_in=function(){
-		this._zoom_core(this._zoom*1.2);
+		this._zoom_core(this._zoom*1.2,true);
 	}
 
 	this.zoom_out=function(){
-		this._zoom_core(this._zoom/1.2);
+		this._zoom_core(this._zoom/1.2,true);
 	}
 	
 	this._ipad_zoom=1;
@@ -112,7 +112,7 @@ function Hand(){
 		this._zoom_core(this._ipad_zoom*m);
 	}
 	
-	this._zoom_core=function(m){
+	this._zoom_core=function(m,button_zoom){
 		var new_zoom=m;
 		if(new_zoom<1.0){
 			new_zoom=1.0;
@@ -127,7 +127,7 @@ function Hand(){
 		var pos_x=(can_fixed[0].width+this._EVENT_MARGIN)/2;
 		var pos_y=(can_fixed[0].height+this._EVENT_MARGIN)/2;
 	
-		if(ipad_is_pc()){
+		if(ipad_is_pc() && !button_zoom){
 			pos_x=(this._zoom_cursor_x+this._EVENT_MARGIN/2);
 			pos_y=(this._zoom_cursor_y+this._EVENT_MARGIN/2);
 		}
