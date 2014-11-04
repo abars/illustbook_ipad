@@ -182,12 +182,22 @@ function DrawCanvas(){
 					}
 				}else{
 					//ペンは一時描画バッファに描くので、一時描画バッファから確定バッファに転送する
-					can_fixed[g_layer.get_layer_no()].getContext("2d").globalAlpha=g_bottom_tool.get_alpha();
-					can_fixed[g_layer.get_layer_no()].getContext("2d").drawImage(this._target_can,0,0);
-					can_fixed[g_layer.get_layer_no()].getContext("2d").globalAlpha=1.0;
+					var ctx_fixed=can_fixed[g_layer.get_layer_no()].getContext("2d");
+					if(!ctx_fixed){
+						alert("fixedコンテキストの取得に失敗。");
+					}
+					ctx_fixed.globalAlpha=g_bottom_tool.get_alpha();
+					ctx_fixed.drawImage(this._target_can,0,0);
+
+					//確定バッファの値を単純にコピーする
+					ctx_fixed.globalAlpha=1.0;
 					for(var layer=0;layer<LAYER_N;layer++){
 						g_draw_primitive.clear(can_local[layer]);
-						can_local[layer].getContext("2d").drawImage(can_fixed[layer],0,0);
+						var ctx_local=can_local[layer].getContext("2d");
+						if(!ctx_local){
+							alert("ローカルコンテキストの取得に失敗。")
+						}
+						ctx_local.drawImage(can_fixed[layer],0,0);
 					}
 				}
 

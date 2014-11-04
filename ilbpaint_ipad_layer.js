@@ -22,6 +22,7 @@ function Layer(){
 		for(var layer=0;layer<default_layer_count;layer++){
 			this._add_layer_core();
 		}
+		document.getElementById("canvas_background").style.display="block";
 	}
 	
 	this.get_canvas=function(){
