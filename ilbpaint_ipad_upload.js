@@ -138,7 +138,7 @@ function Upload(){
 			}
 		
 			that.requestFile(that._data,"POST",cmd,false,ipad_upload_callback);
-		},10);
+		},100);
 	}
 	
 	this.requestFile=function ( data , method , fileName , async ,callback_function){

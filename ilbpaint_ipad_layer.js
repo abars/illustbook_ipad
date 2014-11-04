@@ -29,6 +29,9 @@ function Layer(){
 			can_fixed[layer] = document.getElementById("canvas_fixed_"+layer); 
 			can_local[layer] = document.getElementById("canvas_local_"+layer); 
 			can_drawing[layer] = document.getElementById("canvas_drawing_"+layer);
+			if(!can_fixed[layer] || !can_local[layer] || !can_drawing[layer]){
+				alert("キャンバスの取得に失敗。")
+			}
 		}
 	}
 	
@@ -47,20 +50,29 @@ function Layer(){
 	this._add_layer_core=function(){
 		var txt="";
 		var layer=LAYER_N;
-		txt+='<canvas id="canvas_fixed_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px" style="position: absolute; top: 32; left: 32;z-index: '+(layer*3+1)+';display:none;"></canvas>';
-		txt+='<canvas id="canvas_local_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px" style="position: absolute; top: 32; left: 32;z-index: '+(layer*3+2)+';"></canvas>';
-		txt+='<canvas id="canvas_drawing_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px"  style="position: absolute; top: 32; left: 32;z-index: '+(layer*3+3)+';"></canvas>';
+		txt+='<canvas id="canvas_fixed_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px" style="position: absolute; top: 32px; left: 32px;z-index: '+(layer*3+1)+';display:none;"></canvas>';
+		txt+='<canvas id="canvas_local_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px" style="position: absolute; top: 32px; left: 32px;z-index: '+(layer*3+2)+';"></canvas>';
+		txt+='<canvas id="canvas_drawing_'+layer+'" width="'+this._canvas_width+'px" height="'+this._canvas_height+'px"  style="position: absolute; top: 32px; left: 32px;z-index: '+(layer*3+3)+';"></canvas>';
 		LAYER_N++;
 		this._layer_mode.push(LAYER_MODE_NORMAL);
 		
 		var new_layer=document.createElement("div");
+		if(!new_layer){
+			alert("レイヤーの作成に失敗。")
+		}
 		new_layer.innerHTML=txt;
-		document.getElementById("canvas_div").appendChild(new_layer);
-		
+
+		var target_div=document.getElementById("canvas_div");
+		if(!target_div){
+			alert("追加先のCanvasの取得に失敗。");
+		}
+
+		target_div.appendChild(new_layer);
+
 		this.get_canvas();
 	}
 	
-	this.ACTIVE_COLOR="#292929";//ffffff";//#c7e5f9";
+	this.ACTIVE_COLOR="#292929";
 
 	this.show_layer_tool=function(){
 		var txt="";
@@ -207,6 +219,11 @@ function Layer(){
 	this._canvas_swap=function(image1,image2){
 		var data1=image1.getContext("2d").getImageData(0,0,image1.width,image1.height);
 		var data2=image2.getContext("2d").getImageData(0,0,image2.width,image2.height);
+
+		if(!data1 || !data2){
+			alert("getImageDataに失敗。")
+		}
+
 		image1.getContext("2d").putImageData(data2,0,0);
 		image2.getContext("2d").putImageData(data1,0,0);
 	}

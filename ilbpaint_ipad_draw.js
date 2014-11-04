@@ -159,8 +159,15 @@ function DrawCanvas(){
 		}
 
 		//状態クリア
-		this._target_can.getContext("2d").globalCompositeOperation="source-over"
-		this._target_can.getContext("2d").globalAlpha=1.0
+		if(!this._target_can){
+			alert("描画先キャンバスの取得に失敗。")
+		}
+		var ctx=this._target_can.getContext("2d");
+		if(!ctx){
+			alert("描画先コンテキストの取得に失敗。")
+		}
+		ctx.globalCompositeOperation="source-over"
+		ctx.globalAlpha=1.0
 
 		//ローカルモードの場合で単純描画の場合は描画バッファを流用することで高速化する
 		//以下をコメントアウトするとイラブチャットと同じように再描画するコードとなる

@@ -35,7 +35,7 @@ function ToolBox(){
 		var s=0;
 		var margin=16;
 
-		txt+=this._add_button("g_bottom_tool.click_color_button()","","","",s,0);
+		txt+=this._add_button("g_bottom_tool.click_color_button","","","",s,0);
 		txt+=this._add_button("g_undo_redo.undo","","","undo",s,0);
 		txt+=this._add_button("g_undo_redo.redo","","","redo",s,0);
 
@@ -67,7 +67,7 @@ function ToolBox(){
 
 		txt="";
 
-		txt+=this._add_button("g_bottom_tool.click_layer_button()","","","layer",s,0);
+		txt+=this._add_button("g_bottom_tool.click_layer_button","","","layer",s,0);
 		if(!g_chat.is_chat_mode()){
 			txt+=this._add_button("ipad_switch_storage_form","","","setting",s,0);
 		}
@@ -78,7 +78,7 @@ function ToolBox(){
 		
 		//デバッグ
 		if(SNAPSHOT_SNAP_BUTTON){
-			txt+=this._add_button("g_chat.prepare_snapshot();g_chat.snapshot();","","Snap","snap",s,margin);
+			txt+=this._add_button("g_chat.prepare_snapshot();g_chat.snapshot","","Snap","snap",s,margin);
 		}
 
 		document.getElementById("toolmenu2").innerHTML=txt;
@@ -188,7 +188,7 @@ function Tool(){
 	}
 
 	this.update_color_status=function(color){
-		document.getElementById("g_bottom_tool.click_color_button()").style["backgroundColor"]=color;
+		document.getElementById("g_bottom_tool.click_color_button").style["backgroundColor"]=color;
 	}
 }
 

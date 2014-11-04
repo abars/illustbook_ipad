@@ -21,18 +21,6 @@ function BottomTool(){
 	this._alpha_slider_width=150;
 	this._alpha_slider_height=32-4;
 	
-	/*
-	this._layer_x=9999;//2+32+4;
-	this._layer_y=2;
-	this._layer_width=32;//50;
-	this._layer_height=32;//50;
-
-	this._palette_x=9999;//2;
-	this._palette_y=2;
-	this._palette_width=31;//50;
-	this._palette_height=31;//50;
-	*/
-
 	this._tool=0;
 	
 	this._pen_size=new Array(30,70,70,70);
@@ -109,46 +97,7 @@ function BottomTool(){
 		context.clearRect(0,0,this._canvas_width,this._canvas_height);
 		this._draw_slider(context,this._size_slider_x,this._size_slider_y,this._size_slider_width,this._size_slider_height,this._pen_size[this._tool]);
 this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_slider_width,this._alpha_slider_height,this._alpha[this._tool]*this._alpha_slider_width/100);
-
-		//this._draw_layer(context);
-		//this._draw_palette(context);
 	}
-
-//-------------------------------------------------
-//レイヤー
-//-------------------------------------------------
-
-	/*
-	this._draw_layer=function(context){
-		var s=10;
-		
-		context.beginPath();
-		context.strokeStyle=this._UI_COLOR;//"#5f5fef";
-		context.rect(this._layer_x+s,this._layer_y+s,this._layer_width-s,this._layer_height-s);
-		context.closePath();
-		context.stroke();
-
-		context.beginPath();
-		context.rect(this._layer_x,this._layer_y,this._layer_width-s,this._layer_height-s);
-		context.closePath();
-		context.stroke();
-	}
-
-	this._draw_palette=function(context){
-		context.beginPath();
-		context.strokeStyle=g_color_circle.get_hex_color();
-		context.fillStyle=g_color_circle.get_hex_color();
-		context.rect(this._palette_x,this._palette_y,this._palette_width,this._palette_height);
-		context.fill();
-
-		context.strokeStyle=this._UI_COLOR;//"#5f5fef";
-		context.rect(this._palette_x,this._palette_y,this._palette_width,this._palette_height);
-		context.stroke();
-
-		context.closePath();
-		context.stroke();
-	}
-	*/
 	
 //-------------------------------------------------
 //ペンサイズとα
@@ -258,26 +207,6 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 			this._focus=FOCUS_ALPHA;
 		}
 
-		/*
-		if(click && this._is_range(x,y,this._layer_x,this._layer_y,this._layer_width,this._layer_height)){
-			if(this._sub_tool==SUB_TOOL_LAYER){
-				this._sub_tool=SUB_TOOL_NONE;
-			}else{
-				this._sub_tool=SUB_TOOL_LAYER;
-			}
-			this._update_sub_tool();
-		}
-		
-		if(click && this._is_range(x,y,this._palette_x,this._palette_y,this._palette_width,this._palette_height)){
-			if(this._sub_tool==SUB_TOOL_COLOR){
-				this._sub_tool=SUB_TOOL_NONE;
-			}else{
-				this._sub_tool=SUB_TOOL_COLOR;
-			}
-			this._update_sub_tool();
-		}
-		*/
-
 		this._is_hold=true;
 	}
 
@@ -314,10 +243,10 @@ this._draw_alpha(context,this._alpha_slider_x,this._alpha_slider_y,this._alpha_s
 		}
 		if(this._sub_tool==SUB_TOOL_LAYER){
 			document.getElementById("palette_tool_layer").style.display="block";
-			document.getElementById("g_bottom_tool.click_layer_button()").style["backgroundColor"]="#292929";
+			document.getElementById("g_bottom_tool.click_layer_button").style["backgroundColor"]="#292929";
 		}else{
 			document.getElementById("palette_tool_layer").style.display="none";
-			document.getElementById("g_bottom_tool.click_layer_button()").style["backgroundColor"]="#494949";
+			document.getElementById("g_bottom_tool.click_layer_button").style["backgroundColor"]="#494949";
 		}
 		
 		this._show_layer_tool();
