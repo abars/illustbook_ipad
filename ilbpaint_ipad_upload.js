@@ -40,6 +40,8 @@ function Upload(){
 			category=document.getElementById("category_new").value;
 		}
 
+		var event_id=document.getElementById("event_id").value;
+
 		var author=document.getElementById("name").value;
 		var comment=document.getElementById("comment").value;
 		var delete_key=document.getElementById("delete_key").value;
@@ -92,6 +94,7 @@ function Upload(){
 		this._append("illust_mode",""+illust_mode);
 		this._append("mode","illust_all");
 		this._append("category",category);
+		this._append("event_id",event_id);
 		this._append("base64","1");
 
 		link_to_profile=document.getElementById("link_to_profile")
