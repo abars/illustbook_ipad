@@ -78,7 +78,7 @@ function chat_get_callback(obj){
 		chat_server_error("ルームが終了されました。");
 		return;
 	}
-	chat_server_error("不明なエラー["+obj.status+"]が発生しました。")
+	chat_server_error("不明なエラー[GET:"+obj.status+"]が発生しました。")
 }
 
 //コマンドPOSTコールバック
@@ -95,16 +95,21 @@ function chat_post_callback(obj){
 		if(percent>=SNAPSHOT_PERCENT){
 			g_chat.snapshot();	//スナップショットを作成して容量を削減
 		}
+		return;
 	}
 	if(obj.status=="failed"){
 		g_chat._send_failed();
+		return;
 	}
 	if(obj.status=="disconnect"){
 		chat_server_error("ChannelAPIが切断されました。");
+		return;
 	}
 	if(obj.status=="not_found"){
 		chat_server_error("ルームが終了されました。");
+		return;
 	}
+	chat_server_error("不明なエラー[POST:"+obj.status+"]が発生しました。")
 }
 
 //スナップショットコールバック
