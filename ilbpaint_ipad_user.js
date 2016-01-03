@@ -58,11 +58,11 @@ function User(){
 			var user=this._user_list[i];
 			var name=user.name;
 			var id=user.id.split("_")[0];
-			txt+="<a href='./mypage?user_id="+id+"' target='_BLANK' title='"+name+"' style='text-decoration:none;'>";
-			//txt+="<img src='./show_icon?key="+id+"' width='30px' height='30px' alt='"+name+"'>";
+			txt+="<div style='text-align:center;float:left;'><a href='./mypage?user_id="+id+"' target='_BLANK' title='"+name+"' style='text-decoration:none;'>";
 			txt+="<font color='#ffffff'><small>"+name+"</small></font>";
-			txt+="</a>";
-			txt+="&nbsp;";////<br/>"
+			txt+="<br/><img src='./show_icon?key="+id+"' width='30px' height='30px' alt='"+name+"'>";
+			txt+="</a></div>";
+			//txt+="&nbsp;";////<br/>"
 		}
 
 		document.getElementById("user_list").innerHTML=txt;
