@@ -235,7 +235,7 @@ function ipad_on_mouse_up(e){
 function ipad_on_mouse_up_core(){
 	if(g_layer_move.is_move_mode()){
 		g_layer_move.on_mouse_up();
-		return;
+		//return;
 	}
 
 	if(g_hand.get_prevent_draw()){
