@@ -67,6 +67,7 @@ function chat_get_callback(obj){
 	}
 	if(obj.status=="failed"){
 		g_chat._get_failed();
+		g_chat._get();	//リトライ
 		return;
 	}
 	if(obj.status=="disconnect"){
@@ -137,7 +138,12 @@ function chat_get_userlist_callback(obj){
 		g_user.update_user_list(user_list,name_map);
 	}
 	if(obj.status=="failed"){
-		chat_server_error("ユーザリストの読込に失敗しました。");
+		//chat_server_error("ユーザリストの読込に失敗しました。リトライします。");
+		g_chat._get_user_list(); //リトライ
+	}
+	if(obj.status=="not_found"){
+		chat_server_error("ルームが終了されました。");
+		return;
 	}
 }
 
