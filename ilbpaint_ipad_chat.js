@@ -9,6 +9,7 @@ var WORKER_INITIAL_INTERVAL=1000;	//1秒に一回イニシャルロード
 var WORKER_POST_INTERVAL=2000;		//3秒に一回データを送信
 var SNAPSHOT_PERCENT=75;			//使用率が上がった場合にスナップショットを取る
 var WAIT_FOR_UNDO_MSEC=1000;		//UNDO用に1秒待機
+var HEART_BEAT_INTERVAL=60*1000;	//1分に1回はハートビートを送る
 
 var SNAPSHOT_ALERT=0;				//スナップショットの状況を表示するかどうか
 var SNAPSHOT_SNAP_BUTTON=0;			//スナップボタンを表示するかどうか
@@ -326,6 +327,7 @@ function Chat(){
 		this._posted_count=0;
 		this._posting_count=0;
 		this._posting_retry=0;
+		this._heart_beat_cnt=0;
 	}
 
 	//サーバにコマンド送信
@@ -333,7 +335,10 @@ function Chat(){
 		//送信するデータが存在するかを判定
 		var len=g_buffer.get_local_command_len()-this._posted_count;
 		if(len<=0){
-			return;
+			this._heart_beat_cnt++;
+			if(this._heart_beat_cnt<HEART_BEAT_INTERVAL/WORKER_POST_INTERVAL){	//1分に一回はHeartBeatを送る
+				return;
+			}
 		}
 		
 		//送信するデータを準備
@@ -362,6 +367,7 @@ function Chat(){
 		//送信
 		this._posting_retry=0;
 		this._send_core(cmd_list);
+		this._heart_beat_cnt=0;
 	}
 	
 	//サーバにコマンドリストを送信
