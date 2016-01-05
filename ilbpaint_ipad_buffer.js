@@ -180,14 +180,16 @@ function Buffer(){
 			return;
 		}
 		if(cmd_object.comment!=""){
-			this._text_list+=cmd_object.comment+"\n"+this._text_list;
+			this._text_list=cmd_object.comment+"\n"+this._text_list;
 		}
-		var header=""
+		var text=""
 		if(this._loading){
-			header=ipad_is_english() ? "Initial loading...":"初期読込中...";
-			header+="\n";
+			text=ipad_is_english() ? "Initial loading...":"初期読込中...";
+			text+="\n";
+		}else{
+			text=this._text_list;
 		}
-		document.getElementById("comment_list").value=header+this._text_list;
+		document.getElementById("comment_list").value=text;
 	}
 
 	this._finish_load=function(){
