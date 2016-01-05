@@ -75,8 +75,10 @@ function User(){
 	
 	this._update_status=function(){
 		var perc=this._datastore_size;
-		var txt="";//<small>"+(ipad_is_english() ? "Use ":"容量の")+perc+"%"+(ipad_is_english() ? " of storage":"を使用")+"</small>";
-		document.getElementById("status").innerHTML=txt;
+		if(SNAPSHOT_ALERT){
+			var txt="&nbsp;<small>"+(ipad_is_english() ? "Use ":"容量の")+perc+"%"+(ipad_is_english() ? " of storage":"を使用")+"</small>";
+			document.getElementById("status").innerHTML=txt;
+		}
 	}
 	
 	this._logout_user=function(client_id){

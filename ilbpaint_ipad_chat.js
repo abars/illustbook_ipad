@@ -459,6 +459,12 @@ function Chat(){
 		if(comment==""){
 			return;
 		}
+		if(comment=="debug"){
+			SNAPSHOT_ALERT=1;
+			document.getElementById("comment").value=""
+			g_user._update_status();
+			return;
+		}
 		comment=""+g_chat_user_name+"＞"+comment;
 		
 		var obj=new Object();
