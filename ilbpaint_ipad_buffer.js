@@ -192,7 +192,7 @@ function Buffer(){
 		document.getElementById("comment_list").value=text;
 	}
 
-	this._finish_load=function(){
+	this.notify_initial_load_finish=function(){
 		this._loading=false;
 		var obj=new Object();
 		obj.comment="";

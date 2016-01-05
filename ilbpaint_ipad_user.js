@@ -13,10 +13,12 @@ function user_set_time_delta(server_time){
 function User(){
 	this._user_list;
 	this._datastore_size;
+	this._first_load;
 	
 	this.init=function(){
 		this._user_list=new Array();
 		this._datastore_size=0;
+		this._first_load=true;
 	}
 
 	this.update_user_list=function(oj,name_map){
@@ -38,6 +40,9 @@ function User(){
 		for(var i=0;i<oj.length;i++){
 			this._update_user_list_core(oj[i],name_map[oj[i]]);
 		}
+
+		//初期読み込みの解除
+		this._first_load=false;
 	}
 
 	this._update_user_list_core=function(id,name){
@@ -88,7 +93,9 @@ function User(){
 	
 	//ユーザ追加
 	this._add_user=function(name,id,time){
-		g_buffer._update_comment({"comment":""+name+(ipad_is_english() ? " is coming":"さんが参加しました。")});
+		if(!this._first_load){
+			this.notify_user_login(name);
+		}
 
 		var obj=new Object();
 		obj.name=name;
@@ -97,6 +104,10 @@ function User(){
 		this._user_list.push(obj);
 
 		this._show_all_user();
+	}
+
+	this.notify_user_login=function(name){
+		g_buffer._update_comment({"comment":""+name+(ipad_is_english() ? " is coming":"さんが参加しました。")});
 	}
 	
 	this.get_user_count=function(){
