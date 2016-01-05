@@ -317,7 +317,8 @@ function Chat(){
 
 		//初期読み込みの完了通知
 		if(count!=GET_COMMAND_LIMIT && this._initial_load){
-			g_buffer._update_comment({"comment":ipad_is_english() ? "Finish initial loading":"初期読込が完了しました。"});
+			g_buffer._finish_load();
+			//g_buffer._update_comment({"comment":ipad_is_english() ? "Finish initial loading":"初期読込が完了しました。"});
 			this._initial_load=false;
 			
 			//送信ワーカの起動

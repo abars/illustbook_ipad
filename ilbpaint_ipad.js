@@ -62,7 +62,7 @@ function ipad_init(canvas_width,canvas_height,canvas_url,is_english){
 	if(g_viewmode){
 		g_buffer._update_comment({"comment":"閲覧モードで起動しました。書き込みはできません。"});
 	}
-	g_buffer._update_comment({"comment":(ipad_is_english() ? "Begin initial loading":"初期読込を開始します。")});
+	//g_buffer._update_comment({"comment":(ipad_is_english() ? "Begin initial loading":"初期読込を開始します。")});
 }
 
 //-------------------------------------------------
@@ -131,7 +131,13 @@ function ipad_event_init(){
 
 	//リサイズ
 	window.onresize=function(e){ g_hand.resize(); }
-	window.onmousewheel=function(e){ g_hand.zoom_wheel(e.wheelDelta); }
+	window.onmousewheel=function(e){
+		var tool_y=document.getElementById("bottom_tool").offsetTop;
+		//alert(e.clientY+"/"+tool_y);
+		if(e.clientY<tool_y){
+			g_hand.zoom_wheel(e.wheelDelta);
+		}
+	}
 }
 
 this._before_scale;

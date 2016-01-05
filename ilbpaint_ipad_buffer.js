@@ -11,6 +11,9 @@ function Buffer(){
 	this._local_posted_cnt;		//ローカルコマンドの送信に成功した数
 	this._reload_need;				//リロードが必要かどうか
 	this._redo_buffer;				//REDOバッファ
+	this._loading;					//初期読込中かどうか
+
+	this._text_list;				//バッファテキスト
 
 	this.init=function(){
 		this._local_cmd_list=new Array();
@@ -19,6 +22,8 @@ function Buffer(){
 		this._local_posted_cnt=0;
 		this._reload_need=false;
 		this._redo_buffer=new Array();
+		this._loading=true;
+		this._text_list="";
 	}
 
 //-------------------------------------------------
@@ -174,7 +179,22 @@ function Buffer(){
 		if(!(g_chat.is_chat_mode())){
 			return;
 		}
-		document.getElementById("comment_list").value=cmd_object.comment+"\n"+document.getElementById("comment_list").value
+		if(cmd_object.comment!=""){
+			this._text_list+=cmd_object.comment+"\n"+this._text_list;
+		}
+		var header=""
+		if(this._loading){
+			header=ipad_is_english() ? "Initial loading...":"初期読込中...";
+			header+="\n";
+		}
+		document.getElementById("comment_list").value=header+this._text_list;
+	}
+
+	this._finish_load=function(){
+		this._loading=false;
+		var obj=new Object();
+		obj.comment="";
+		this._update_comment(obj);
 	}
 
 //-------------------------------------------------
