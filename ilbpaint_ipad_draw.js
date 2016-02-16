@@ -18,6 +18,19 @@ function DrawCanvas(){
 	//描画をキャンセルする
 	this.release_flag=function(){
 		this._draw_flag=false;
+
+		//消しゴムの状態をキャンセルする
+		var ctx=this._target_can.getContext("2d");
+		ctx.globalCompositeOperation="source-over";
+		ctx.globalAlpha=1.0;
+
+		//描画をキャンセルするために確定バッファからローカルバッファに描き戻す
+		for(var layer=0;layer<LAYER_N;layer++){
+			g_draw_primitive.clear(can_local[layer]);
+			var ctx_local=can_local[layer].getContext("2d");
+			ctx_local.drawImage(can_fixed[layer],0,0);
+		}
+
 		g_draw_primitive.clear(can_drawing[g_layer.get_layer_no()]);
 	}
 
@@ -110,7 +123,7 @@ function DrawCanvas(){
 		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
 			this._target_can=can_local[g_layer.get_layer_no()];
 			this._target_can.getContext("2d").globalCompositeOperation="destination-out"
-			this._target_can.getContext("2d").globalAlpha=g_bottom_tool.get_alpha();//1.0;
+			this._target_can.getContext("2d").globalAlpha=g_bottom_tool.get_alpha();
 		}else{
 			this._target_can=can_drawing[g_layer.get_layer_no()]
 		}
