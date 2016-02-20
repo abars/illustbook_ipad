@@ -11,11 +11,49 @@ function DrawCanvas(){
 
 	this._x_array;
 	this._y_array;
+	this._pressure;
 	this._pos;
 	
 	this._draw_flag=false;
+	this._pressure_enable=true;
 	
-	//描画をキャンセルする
+	this.init=function(){
+		this.on_load_pressure_enable();
+	}
+
+//-------------------------------------------------
+//筆圧の有効無効
+//-------------------------------------------------
+
+	this.on_load_pressure_enable=function(){
+		var target=document.getElementById("pressure_enable");
+
+		target[0].selected=false;
+		target[1].selected=false;
+
+		var is_pressure_enable=window.localStorage["pressure_enable"];
+		if(is_pressure_enable=="disable"){
+			this._pressure_enable=false;
+			target[1].selected=true;
+		}else{
+			this._pressure_enable=true;
+			target[0].selected=true;
+		}
+	}
+
+	this.on_change_pressure_enable=function(enable){
+		if(enable=="enable"){
+			this._pressure_enable=true;
+		}else{
+			this._pressure_enable=false;
+		}
+		window.localStorage["pressure_enable"]=enable;
+	}
+
+//-------------------------------------------------
+//描画をキャンセルする
+//-------------------------------------------------
+
 	this.release_flag=function(){
 		this._draw_flag=false;
 
@@ -63,8 +101,19 @@ function DrawCanvas(){
 				txt+=",";
 			}
 		}
+		txt+="],";
+
+		txt+="'pressure':[";
+		for(var i=0;i<this._pressure.length;i++){
+			txt+=""+this._pressure[i];
+			if(i!=this._pressure.length-1){
+				txt+=",";
+			}
+		}
 		txt+="]";
+		
 		txt+="}]";
+
 		return txt;
 	}
 	
@@ -77,19 +126,26 @@ function DrawCanvas(){
 		var alpha=obj['alpha'];
 		var point=obj['point'];
 		var tool=obj['tool'];
+		var pressure=obj['pressure'];
 
 		var len=point.length/2;
 		var x_array=new Array(len);
 		var y_array=new Array(len);
+		var p_array=new Array(len);
 		
 		for(var i=0;i<len;i++){
 			x_array[i]=point[i*2+0];
 			y_array[i]=point[i*2+1];
+			if(pressure){
+				p_array[i]=pressure[i];
+			}else{
+				p_array[i]=1.0;
+			}
 		}
 		
 		var pos=0;
 		for(var i=0;i<x_array.length;i++){
-			if(this._draw_core(canvas,x_array,y_array,pos,color,size,tool)){
+			if(this._draw_core(canvas,x_array,y_array,pos,color,size,tool,p_array)){
 				pos+=2;
 			}
 		}
@@ -105,7 +161,11 @@ function DrawCanvas(){
 		return this._draw_flag;
 	}
 
-	this.on_mouse_down=function(x,y){
+	this.on_mouse_down=function(x,y,pressure){
+		if(!this._pressure_enable){
+			pressure=1;
+		}
+
 		if(g_tool.get_tool()=="fill"){
 			g_undo_redo.push();
 			var context=can_fixed[g_layer.get_layer_no()].getContext("2d");
@@ -117,7 +177,7 @@ function DrawCanvas(){
 
 		this._draw_begin();
 		
-		this._add_point(this._get_mx(x),this._get_my(y));
+		this._add_point(this._get_mx(x),this._get_my(y),pressure);
 		this._draw_flag=true;
 		
 		if(g_tool.get_tool()=="eraser" || g_tool.get_tool()=="blur_eraser"){
@@ -145,12 +205,15 @@ function DrawCanvas(){
 		g_hand.set_zoom_cursor(this._get_mx(x),this._get_my(y));
 	}
 	
-	this.on_mouse_move=function(x,y){
+	this.on_mouse_move=function(x,y,pressure){
 		if(!this._draw_flag){
 			return;
 		}
-		this._add_point(this._get_mx(x),this._get_my(y));
-		if(this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool())){
+		if(!this._pressure_enable){
+			pressure=1;
+		}
+		this._add_point(this._get_mx(x),this._get_my(y),pressure);
+		if(this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool(),this._pressure)){
 			this._pos+=2;
 		}
 	}
@@ -164,10 +227,11 @@ function DrawCanvas(){
 		//描画コマンドを確定
 		var command_list=null;
 		if(this._draw_flag){
+			var l=this._x_array.length-1;
 			while(this._x_array.length<=2){
-				this._add_point(this._x_array[0],this._y_array[0]);
+				this._add_point(this._x_array[l],this._y_array[l],this._pressure[l]);
 			}
-			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool());
+			this._draw_core(this._target_can,this._x_array,this._y_array,this._pos,g_palette.get_color(),g_bottom_tool.get_size(),g_tool.get_tool(),this._pressure);
 			command_list=this.get_command_list();
 		}
 
@@ -237,12 +301,21 @@ function DrawCanvas(){
 	this._draw_begin=function(){
 		this._x_array=new Array();
 		this._y_array=new Array();
+		this._pressure=new Array();
 		this._pos=0;
 	}
 	
-	this._add_point=function(x,y){
+	this._add_point=function(x,y,pressure){
+		pressure=this._adjust_pressure(pressure);
 		this._x_array.push(x);
 		this._y_array.push(y);
+		this._pressure.push(pressure);
+
+		//noise reduction
+		if(this._pressure.length==3){
+			this._pressure[0]=this._pressure[2];
+			this._pressure[1]=this._pressure[2];
+		}
 	}
 	
 	this._is_same_point=function(x1,y1,x2,y2,x3,y3){
@@ -253,8 +326,19 @@ function DrawCanvas(){
 		}
 		return false;
 	}
+
+	this._adjust_pressure=function(p){
+		if(g_tool.get_tool()!="pen"){
+			return 1.0;
+		}
+		p=p*2;
+		if(p>=1){
+			p=1;
+		}
+		return p;
+	}
 	
-	this._draw_core=function(canvas,x_array,y_array,pos,color,size,tool){
+	this._draw_core=function(canvas,x_array,y_array,pos,color,size,tool,pressure){
 		if(x_array.length-pos<=2){
 			return false;
 		}
@@ -269,22 +353,74 @@ function DrawCanvas(){
 		context.strokeStyle = color;
 		context.fillStyle = color;
 		context.lineCap = "round";
-		
-		context.beginPath();
+
 		if(is_same_point){
-			context.lineWidth = 1;
-			context.arc(x_array[pos],y_array[pos],size/2,0,2*Math.PI,false);
-			context.fill();
+			this._draw_dot(context,x_array,y_array,pressure,size,pos);
 		}else{
-			context.lineWidth = size;
-			context.moveTo(x_array[pos], y_array[pos]);
-			context.quadraticCurveTo(x_array[pos+1], y_array[pos+1],x_array[pos+2],y_array[pos+2]);
+			if(pos>=1){
+				this._draw_bspline(context,x_array,y_array,pressure,size,pos-1);
+			}
+			this._draw_bspline(context,x_array,y_array,pressure,size,pos);
+
+			//this._draw_normal(context,x_array,y_array,pressure,size,pos);
 		}
-		context.stroke();
-		context.closePath();
 		
 		return true;
 	} 
+
+	this._draw_dot=function(context,x_array,y_array,pressure,size,pos){
+		size*=pressure[pos];
+		context.beginPath();
+		context.lineWidth = 1;
+		context.arc(x_array[pos],y_array[pos],size/2,0,2*Math.PI,false);
+		context.fill();
+		context.stroke();
+		context.closePath();
+	}
+
+	this._draw_normal=function(context,x_array,y_array,pressure,size,pos){
+		size*=pressure[pos];
+		context.beginPath();
+		context.lineWidth = size;
+		context.moveTo(x_array[pos], y_array[pos]);
+		context.quadraticCurveTo(x_array[pos+1], y_array[pos+1],x_array[pos+2],y_array[pos+2]);
+		context.stroke();
+		context.closePath();
+	}
+
+	this._bspline2 = function (pressures, l, t){
+		var x = 0.5 * (pressures[l - 1] + pressures[l - 2]) +
+				t * (pressures[l - 1] - pressures[l - 2]) +
+				0.5 * t * t * (pressures[l] - 2.0 * pressures[l - 1] + pressures[l - 2]);
+		return x;
+	}
+
+	this._draw_bspline=function(context,x_array,y_array,pressure,size,pos){
+		var sx=this._bspline2(x_array,pos+2,0);
+		var sy=this._bspline2(y_array,pos+2,0);
+		var sp=this._bspline2(pressure,pos+2,0);
+
+		var div_unit=8;
+		for(var t=0;t<=1.0;t+=1.0/div_unit){
+			if(t==0)
+				continue;
+				
+			var nx=this._bspline2(x_array,pos+2,t);
+			var ny=this._bspline2(y_array,pos+2,t);
+			var np=this._bspline2(pressure,pos+2,t);
+				
+			context.beginPath();
+			context.moveTo(sx,sy);
+			context.lineWidth = np * size;
+			context.lineTo(nx,ny);
+			context.stroke();
+			context.closePath();
+
+			sx=nx;
+			sy=ny;
+			sp=np;
+		}
+	}
 	
 	this._draw_blur=function(canvas,x_array,y_array,pos,color,size,is_same_point){
 		size*=0.5;

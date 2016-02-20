@@ -53,6 +53,7 @@ function ipad_init(canvas_width,canvas_height,canvas_url,is_english){
 	g_tool.init();
 	g_palette.init();
 	g_hand.init();
+	g_draw_canvas.init();
 	
 	//インポート
 	if(canvas_url!=""){
@@ -160,17 +161,32 @@ function ipad_on_gesture_end(e){
 	e.preventDefault();
 }
 
+var g_before_pressure=1;
+
+function ipad_get_pressure(e){
+	var pressure;
+	if(e.touches[0].force){
+		pressure=e.touches[0].force;
+		g_before_pressure=pressure;
+	}else{
+		pressure=g_before_pressure;
+	}
+	return pressure;
+}
+
 function ipad_on_mouse_move(e){
+	var pressure=1.0;
 	if(e.touches){
 		e.preventDefault();
 		if(e.touches.length>=2){
 			g_hand.on_mouse_move(e.touches[0].clientX,e.touches[0].clientY,e.touches[1].clientX,e.touches[1].clientY);
 			return;
 		}
-		ipad_on_mouse_move_core(e.touches[0].clientX,e.touches[0].clientY);
+		pressure=ipad_get_pressure(e);
+		ipad_on_mouse_move_core(e.touches[0].clientX,e.touches[0].clientY,pressure);
 		return;
 	}
-	ipad_on_mouse_move_core(e.clientX,e.clientY);
+	ipad_on_mouse_move_core(e.clientX,e.clientY,pressure);
 }
 
 function ipad_on_mouse_down(e){
@@ -179,16 +195,18 @@ function ipad_on_mouse_down(e){
 		g_draw_canvas.release_flag();
 		//ipad_on_mouse_up_core();
 	}
+	var pressure=1.0;
 	if(e.touches){
 		e.preventDefault();
 		if(e.touches.length>=2){
 			g_hand.on_mouse_down(e.touches[0].clientX,e.touches[0].clientY,e.touches[1].clientX,e.touches[1].clientY);
 			return;
 		}
-		ipad_on_mouse_down_core(e.touches[0].clientX,e.touches[0].clientY);
+		pressure=ipad_get_pressure(e);
+		ipad_on_mouse_down_core(e.touches[0].clientX,e.touches[0].clientY,pressure);
 		return;
 	}
-	ipad_on_mouse_down_core(e.clientX,e.clientY);
+	ipad_on_mouse_down_core(e.clientX,e.clientY,pressure);
 	e.preventDefault();
 }
 
@@ -197,7 +215,7 @@ function ipad_on_mouse_context(e){
 	e.preventDefault();
 }
 
-function ipad_on_mouse_move_core(x,y){
+function ipad_on_mouse_move_core(x,y,pressure){
 	g_draw_canvas.update_cursor(x,y);
 	if(g_layer_move.is_move_mode()){
 		g_layer_move.on_mouse_move(x,y);
@@ -211,10 +229,10 @@ function ipad_on_mouse_move_core(x,y){
 		g_hand.on_mouse_move(x,y,x,y);
 		return;
 	}
-	g_draw_canvas.on_mouse_move(x,y);
+	g_draw_canvas.on_mouse_move(x,y,pressure);
 }
 
-function ipad_on_mouse_down_core(x,y){
+function ipad_on_mouse_down_core(x,y,pressure){
 	if(g_layer_move.is_move_mode()){
 		g_layer_move.on_mouse_down(x,y,g_layer.get_layer_no());
 		return;
@@ -228,7 +246,7 @@ function ipad_on_mouse_down_core(x,y){
 		return;
 	}
 	if(!(g_chat.is_view_mode())){
-		g_draw_canvas.on_mouse_down(x,y);
+		g_draw_canvas.on_mouse_down(x,y,pressure);
 		g_upload.set_illust_exist();
 	}
 }
