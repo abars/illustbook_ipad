@@ -328,7 +328,8 @@ function DrawCanvas(){
 	}
 
 	this._adjust_pressure=function(p){
-		if(g_tool.get_tool()!="pen"){
+		var tool=g_tool.get_tool();
+		if(tool!="pen" && tool!="blur" && tool!="blur_eraser"){
 			return 1.0;
 		}
 		p=p*2;
@@ -346,7 +347,7 @@ function DrawCanvas(){
 		var is_same_point=this._is_same_point(x_array[pos],y_array[pos],x_array[pos+1],y_array[pos+1],x_array[pos+2],y_array[pos+2]);
 		
 		if(tool=="blur" || tool=="blur_eraser"){
-			return this._draw_blur(canvas,x_array,y_array,pos,color,size,is_same_point);
+			return this._draw_blur(canvas,x_array,y_array,pos,color,size,is_same_point,pressure);
 		}
 		
 		var context = canvas.getContext("2d");
@@ -422,7 +423,7 @@ function DrawCanvas(){
 		}
 	}
 	
-	this._draw_blur=function(canvas,x_array,y_array,pos,color,size,is_same_point){
+	this._draw_blur=function(canvas,x_array,y_array,pos,color,size,is_same_point,pressure){
 		size*=0.5;
 
 		var context = canvas.getContext("2d");
@@ -433,23 +434,35 @@ function DrawCanvas(){
 
 		context.strokeStyle = color;
 		context.fillStyle = color;
-		context.shadowBlur = 30;
+		//context.shadowBlur = 30;
 		context.lineCap = "round";
 
-		context.beginPath();
+		//context.beginPath();
 		for(var i=step;i<sigma*3;i=i+step){
 			var gauss=1/(Math.sqrt(2*Math.PI)*sigma)*Math.exp(-(i*i)/(2*sigma*sigma));
 			context.globalAlpha=gauss;
+			/*
 			var add=0;
 			if(is_same_point){
 				add=1;
 			}
+			*/
+			if(is_same_point){
+				this._draw_dot(context,x_array,y_array,pressure,size*i,pos);
+			}else{
+				if(pos>=1){
+					this._draw_bspline(context,x_array,y_array,pressure,size*i,pos-1);
+				}
+				this._draw_bspline(context,x_array,y_array,pressure,size*i,pos);
+			}
+			/*
 			context.lineWidth = size*i;
 			context.moveTo(x_array[pos], y_array[pos]);
 			context.quadraticCurveTo(x_array[pos+1]+add, y_array[pos+1],x_array[pos+2]+add,y_array[pos+2]);
 			context.stroke();
+			*/
 		}
-		context.closePath();
+		//context.closePath();
 
 		context.restore();
 		return true;
