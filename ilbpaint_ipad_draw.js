@@ -379,6 +379,7 @@ function DrawCanvas(){
 		context.closePath();
 	}
 
+	/*
 	this._draw_normal=function(context,x_array,y_array,pressure,size,pos){
 		size*=pressure[pos];
 		context.beginPath();
@@ -388,6 +389,7 @@ function DrawCanvas(){
 		context.stroke();
 		context.closePath();
 	}
+	*/
 
 	this._bspline2 = function (pressures, l, t){
 		var x = 0.5 * (pressures[l - 1] + pressures[l - 2]) +
@@ -402,6 +404,16 @@ function DrawCanvas(){
 		var sp=this._bspline2(pressure,pos+2,0);
 
 		var div_unit=8;
+
+		var r=(x_array[pos+2]-x_array[pos+1])*(x_array[pos+2]-x_array[pos+1]);
+		r+=(y_array[pos+2]-y_array[pos+1])*(y_array[pos+2]-y_array[pos+1]);
+		r=Math.floor(Math.sqrt(r)/(size/4));
+
+		div_unit=r;
+		if(div_unit<4){
+			div_unit=4;
+		}
+
 		for(var t=0;t<=1.0;t+=1.0/div_unit){
 			if(t==0)
 				continue;
