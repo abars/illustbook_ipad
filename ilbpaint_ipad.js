@@ -119,16 +119,14 @@ function ipad_event_init(){
 	can_div.addEventListener("touchstart", ipad_on_mouse_down , false);
 	can_event.addEventListener("touchend", ipad_on_mouse_up,false);
 	
+	/*
+	//Androidと両対応するためにGestureは使わない
 	can_div.addEventListener("gesturestart", ipad_on_gesture_start,false);
 	can_div.addEventListener("gesturechange", ipad_on_gesture_change,false);
 	can_div.addEventListener("gestureend", ipad_on_gesture_end,false);
+	*/
 
 	can_event.addEventListener("touchstart", function(e){ e.preventDefault();},false);
-/*
-	//横スクロール禁止
-	document.getElementById("toolmenu").addEventListener("touchmove", function(e){ e.preventDefault();},false);
-	document.getElementById("bottom_tool").addEventListener("touchmove", function(e){e.preventDefault();},false);
-*/
 
 	//リサイズ
 	window.onresize=function(e){ g_hand.resize(); }
@@ -141,25 +139,71 @@ function ipad_event_init(){
 	}
 }
 
-this._before_scale;
+//-------------------------------------------------
+//gesture
+//-------------------------------------------------
 
+this._before_scale;
+this._pinch_distance = -1;
+
+//iOS
+/*
 function ipad_on_gesture_start(e){
+	gesture_start(e);
+}
+
+function ipad_on_gesture_change(e){
+	gesture_change(e,e.scale);
+}
+
+function ipad_on_gesture_end(e){
+	gesture_end(e);
+}
+*/
+
+//Android
+function android_on_gesture_start(e){
+	this._pinch_distance = Math.sqrt(Math.pow((e.touches[1].pageX - e.touches[0].pageX),2)+Math.pow((e.touches[1].pageY - e.touches[0].pageY),2));
+	gesture_start(e);
+}
+
+function android_on_gesture_change(e){
+	if(this._pinch_distance == -1){
+		android_on_gesture_start(e);
+		return;
+	}
+	var new_distance = Math.sqrt(Math.pow((e.touches[1].pageX - e.touches[0].pageX),2)+Math.pow((e.touches[1].pageY - e.touches[0].pageY),2));
+	var scale=new_distance / this._pinch_distance;
+	gesture_change(e,scale);
+}
+
+function android_on_gesture_end(e){
+	gesture_end(e);
+	this._pinch_distance = -1;
+}
+
+//Core
+function gesture_start(e){
 	e.preventDefault();
 	g_hand.zoom_ipad_begin();
 	this._before_scale=1.0;
 }
 
-function ipad_on_gesture_change(e){
+function gesture_change(e,scale){
 	e.preventDefault();
-	if(Math.abs(this._before_scale-e.scale)>0.05){
-		this._before_scale=e.scale;
-		g_hand.zoom_ipad_change(e.scale);
+	if(Math.abs(this._before_scale-scale)>0.05){
+		this._before_scale=scale;
+		g_hand.zoom_ipad_change(scale);
 	}
 }
 
-function ipad_on_gesture_end(e){
+function gesture_end(e){
 	e.preventDefault();
 }
+
+//-------------------------------------------------
+//pressure
+//-------------------------------------------------
 
 var g_before_pressure=1;
 
@@ -174,11 +218,16 @@ function ipad_get_pressure(e){
 	return pressure;
 }
 
+//-------------------------------------------------
+//touch
+//-------------------------------------------------
+
 function ipad_on_mouse_move(e){
 	var pressure=1.0;
 	if(e.touches){
 		e.preventDefault();
 		if(e.touches.length>=2){
+			android_on_gesture_change(e);
 			g_hand.on_mouse_move(e.touches[0].clientX,e.touches[0].clientY,e.touches[1].clientX,e.touches[1].clientY);
 			return;
 		}
@@ -199,6 +248,7 @@ function ipad_on_mouse_down(e){
 	if(e.touches){
 		e.preventDefault();
 		if(e.touches.length>=2){
+			android_on_gesture_start(e);
 			g_hand.on_mouse_down(e.touches[0].clientX,e.touches[0].clientY,e.touches[1].clientX,e.touches[1].clientY);
 			return;
 		}
@@ -208,6 +258,12 @@ function ipad_on_mouse_down(e){
 	}
 	ipad_on_mouse_down_core(e.clientX,e.clientY,pressure);
 	e.preventDefault();
+}
+
+function ipad_on_mouse_up(e){
+	e.preventDefault();
+	ipad_on_mouse_up_core();
+	android_on_gesture_end(e);
 }
 
 function ipad_on_mouse_context(e){
@@ -249,11 +305,6 @@ function ipad_on_mouse_down_core(x,y,pressure){
 		g_draw_canvas.on_mouse_down(x,y,pressure);
 		g_upload.set_illust_exist();
 	}
-}
-
-function ipad_on_mouse_up(e){
-	e.preventDefault();
-	ipad_on_mouse_up_core();
 }
 
 function ipad_on_mouse_up_core(){
