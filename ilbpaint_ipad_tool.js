@@ -10,6 +10,10 @@
 var TOOL_ENABLE_ALPHA=1.0;
 var TOOL_DISABLE_ALPHA=0.5;
 
+if(typeof ICON_PATH == 'undefined'){
+	ICON_PATH="js/ipad/icons/";
+}
+
 function ToolBox(){
 	this._add_button=function(cmd,info,info_eng,icon,s,margin){
 		if(ipad_is_english()){
@@ -23,7 +27,7 @@ function ToolBox(){
 		}
 		txt+=' class="tool_button" style="position:relative;float:left;margin-left:'+margin+'px;">';
 		if(icon!=""){
-			txt+='<img src=\'js/ipad/icons/'+icon+'.png\' class="tool_button_icon"/>';
+			txt+='<img src=\''+ICON_PATH+icon+'.png\' class="tool_button_icon"/>';
 		}
 		txt+='<div class="tool_button_option">'+info_eng+'</div>';
 		txt+='</div>';

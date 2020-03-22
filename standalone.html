@@ -1,0 +1,331 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+
+<meta name="viewport" content="viewport-fit=cover,width=device-width,user-scalable=no,minimum-scale=1.0,maximum-scale=1.0">
+<!--
+	iPhone
+	{# user-scalable=noを使うとAndroid2.3で動作しないがNexus5のために断念 #}
+	<meta name="viewport" content="width=480,user-scalable=no">
+-->
+
+<title>ilbpaint for HTML5 Sample</title>
+
+<script type="text/javascript">
+	ICON_PATH="icons/";
+	CANVAS_WIDTH=512;
+	CANVAS_HEIGHT=512;
+	CANVAS_ID='';
+</script>
+
+<script language="JavaScript" src="megapix-image.js"></script>
+<script language="JavaScript" src="android_premulta.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_floodfill.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_const.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_rendering.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_draw_primitive.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_draw.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_chat.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_buffer.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_undo.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_upload.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_import.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_tool.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_hand.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_user.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_layer.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_spoit.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_palette.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_colorcircle.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_bottom_tool.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad_storage.js"></script>
+<script language="JavaScript" src="ilbpaint_ipad.js"></script>
+
+<style>
+	/* for IE10 */
+	body{
+		-ms-touch-action: none;
+		-ms-content-zooming: none;
+	}
+
+	/* for all */
+	.layer_button{
+		border:solid 1px #ffffff;
+		margin:6px;
+		padding:2px;
+	}
+	
+	#toolmenu,#toolmenu2{
+		float:left;
+		z-index:99;
+		background-color:#494949;
+		padding:2px;
+		margin: 0px;
+		height:44px;
+		margin-right:16px;
+	}
+
+	#edit_tool{
+		float:left;
+		margin:4px;
+		padding:2px;
+		height:32px;
+	}
+	
+	#bottom_tool{
+		position:fixed;
+		width:100%;
+		/*width:480px;*/
+		left:0px;
+		bottom:0px;
+		padding:0px;
+		padding-bottom: env(safe-area-inset-bottom);
+		margin:0px;
+		z-index:99;
+		background-color:#494949;
+	}
+
+	#palette_tool{
+		position:fixed;
+		display:none;
+		z-index:99;
+		left:0px;
+		margin:2px;
+		background-color:#494949;
+		margin-bottom:4px;
+		color:#ffffff;
+	}
+	
+	.upload_innner{
+		padding:4px;
+		color:#ffffff;
+	}
+
+	.storage_form,.upload_form{
+		position:fixed;
+		padding-bottom:10px;
+		display:none;
+		left:0px;
+		bottom:0px;
+		width:468px;
+		z-index:99;
+		background-color:#494949;
+		margin:2px;
+		margin-bottom:4px;
+		padding:4px;
+		color:#ffffff;
+	}
+	
+	.tool_button{
+		margin:2px;
+		text-align:center;
+		background-color:#494949;
+		width:40px;
+		height:40px;
+	}
+
+	.tool_button_icon{
+		position: relative;
+		top: 50%;
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+		-moz-transform: translateY(-50%);
+	}
+
+	.tool_button_option{
+		position:absolute;
+		right:0px;
+		bottom:0px;
+		color:#ffffff;
+		font-size:8px;
+	}
+
+	#comment_list{
+		width:100%;
+		height:100px;
+		font-size:13px;
+	}
+
+	#comment_form{
+		margin:2px;
+		margin-left:0px;
+		margin-right:0px;
+	}
+
+	#comment{
+		width:100%;
+		font-size:13px;
+	}
+
+	#comment_submit{
+		font-size:11px;
+		margin-left:2px;
+		visibility:hidden;
+	}
+
+	#comment_submit,#comment,#comment_list{
+		background:#494949;
+		color:#efefef;
+		border: 1px solid #888888;
+	}
+
+	#chat_status{
+		float:left;
+		margin-left:2px;
+		margin-top:2px;
+		width:25%;
+		color:#ffffff;
+	}
+
+	#chat_comment{
+		clear:both;
+		float:left;
+		width:70%;
+		margin-top:2px;
+		margin-left:0px;
+	}
+
+	#cursor{
+		display:none;
+		width: 50px;
+		height: 50px;
+		border-radius: 25px;
+		border: 1px solid #999;
+	}
+
+	body {
+		background-color:#adadad;
+		margin:0px;
+		overflow:hidden;
+		margin:0px;
+		padding:0px;
+		-webkit-user-select: none;
+	}
+</style>
+
+</head>
+
+<script type="text/javascript">
+	function initialize(){
+		//initialize_core();
+		setTimeout(initialize_core,100);	//Androidで起動直後はinnerHeightが正常に取得できないので
+	}
+
+	function initialize_core(){
+		chat_init('local','','',0);
+		var is_english=true;
+		ipad_init(CANVAS_WIDTH,CANVAS_HEIGHT,CANVAS_ID,is_english);
+	}
+</script>
+
+<body onload="initialize();" onselectstart="return false;">
+
+<div style="width:100%;height:100%;">
+	<div id="bottom_tool">
+		<div id="toolmenu">
+		</div>
+		<div id="toolmenu2">
+		</div>
+		<div id="edit_tool">
+			<canvas id="pen_tools" width="320px" height="36px"></canvas>
+		</div>
+	</div>
+
+	<div id="palette_tool">
+		<div id="palette_tool_color" style="display:none;">
+			<div style="float:left;"><canvas id="color_circle" width="200px" height="200px"></canvas></div>
+			<div id="palette" style="float:left;max-width:210px;margin-top:4px;margin-bottom:4px;"></div>
+		</div>
+		<div id="palette_tool_layer" style="display:none;">
+			<div id="palette_tool_layer_list" style="float:left;">
+			</div>
+			<div style="float:left;" id="layer_button_list">
+			</div>
+		</div>
+	</div>
+
+	<div id="storage_form" class="storage_form">
+		<table class="upload_innner">
+		<tr>
+		<td>
+		Pressure&nbsp;
+		</td>
+		<td>
+		<select id="pressure_enable" onchange="javascript:g_draw_canvas.on_change_pressure_enable(this.value);">
+		<option value="enable" selected>Enable</option>
+		<option value="disable">Disable</option>
+		</select>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		Canvas size&nbsp;
+		</td>
+		<td>
+		<input id="canvas_width" value="512" size="4"/>
+		x
+		<input id="canvas_height" value="512" size="4"/>
+		&nbsp;
+		<input class="g-button" type="button" value="Resize" onclick="javascript:g_storage.resize()"/>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		Local Storage&nbsp;
+		</td>
+		<td>
+		<input class="g-button" type="button" value="Save image" onclick="javascript:g_storage.save();"/>
+		<input class="g-button" type="button" value="Load image" onclick="javascript:g_storage.load();"/>
+		</td>
+		</tr>
+		</table>
+	</div>
+
+	<div id="uploading" class="upload_form">
+		<div class="upload_innner">
+			Now uploading
+			<input class="g-button" type="button" value="Cancel" onclick="javascript:g_upload.upload_cansel();">
+		</div>
+	</div>
+
+	<div id="upload_finish" class="upload_form">
+		<div class="upload_innner">
+			Upload success
+		</div>
+	</div>
+
+	<div id="upload_form" class="upload_form">
+		<div class="upload_innner">
+		<table class="upload_innner">
+			<tr><td>Title</td><td><input id="title" value="title"/></td></tr>
+			<tr><td>Author</td><td><input id="name" value="author"/>
+			<div style="display:none;">
+			<input id="link_to_profile" name="link_to_profile" type="checkbox" checked>Link
+			</div>
+			<tr><td>Delete key</td><td><input id="delete_key"></td></tr>
+			<tr><td>Import</td><td><input type="file" id="import" onchange="ipad_import();"/></td></tr>
+		</table>
+		Comment<br/><textarea id="comment" rows=6 style="width:90%;">summary</textarea><br/><br/>
+		<input id="submit_illust" class="g-button" type="button" value="Submit" onclick="javascript:g_upload.upload('{{bbs_key}}','{{thread_key}}','{{entry_key}}','{{reply}}',false,false);" style="float:left;"/>
+		<input id="submit_text" class="g-button" type="button" value="Text only" onclick="javascript:g_upload.upload('{{bbs_key}}','{{thread_key}}','{{entry_key}}','{{reply}}',true,false);" style="display:none;margin-left:0px;float:left;"/>
+		<br clear="all"/>
+		</div>
+	</div>
+
+	<!-- Canvas外でもイベントを取るためにサイズを64拡張する -->
+	<div id="canvas_event" style="width:100%;height:100%;overflow:hidden;">
+		<div id="canvas_div" style="position:relative;width:576px;height:576px; top: 0; left: 0;">
+			<canvas id="canvas_background" width="512px" height="512px" style="position: absolute; top: 32px; left: 32px;background-color:#ffffff;z-index: 0; display: none;"></canvas>
+		</div>
+		<div id="cursor" style="position:absolute;top:0px;left:0px;z-index: 1;"></div>
+	</div>
+</div>
+
+<!--ワーク-->
+<canvas id="canvas_work" width="512px" height="512px"  style="position: absolute; top: 0; left: 0;z-index: 0; visibility:hidden;"></canvas>
+<canvas id="canvas_rendering" width="512px" height="512px" style="background-color:#ff0000;z-index:100;position:absolute;top:0;left:60;display:none;"></canvas>
+<canvas id="canvas_thumbnail" width="100" height="100" style="background-color:#00ff00;z-index:110;position:absolute;top:0;left:60;display:none;"></canvas>
+
+</body>
+</html>

@@ -18,6 +18,14 @@ http://www.illustbook.net/guide?contents=mobile
 
 # How to deploy
 
+## Use standalone
+
+(1) Clone https://github.com/abars/illustbook_ipad
+
+(2) Open standalone.html
+
+## Use with illustbook
+
 (1) Clone https://github.com/abars/illustbook_ipad
 
 (2) Copy html and css from https://github.com/abars/illustbook/tree/master/html/tools
